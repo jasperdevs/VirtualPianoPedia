@@ -74,22 +74,24 @@ export function SheetPage() {
             </FluidPanel>
           </div>
 
-          <aside className="space-y-3 lg:sticky lg:top-24 lg:self-start lg:pt-24">
-            <FluidButton variant="outline" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
-              <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
-              {isFavorite(sheet.slug) ? "Saved" : "Save"}
-            </FluidButton>
-            <Info icon={<GaugeIcon />} label="Default level" value={sheet.difficulty} />
-            <Info icon={<MetronomeIcon />} label="Tempo" value={`${sheet.tempo} bpm`} />
-            <Info icon={<MusicNoteIcon />} label="Transpose" value={String(sheet.transpose)} />
-            <div className="pt-3">
+          <aside className="lg:sticky lg:top-24 lg:self-start lg:pt-24">
+            <FluidPanel className="border border-border/70 bg-card p-3">
+              <FluidButton variant="outline" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
+                <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
+                {isFavorite(sheet.slug) ? "Saved" : "Save"}
+              </FluidButton>
+              <div className="my-3 space-y-1 rounded-xl bg-background/45 p-2 ring-1 ring-border/45">
+                <Info icon={<GaugeIcon />} label="Level" value={sheet.difficulty} />
+                <Info icon={<MetronomeIcon />} label="Tempo" value={`${sheet.tempo} bpm`} />
+                <Info icon={<MusicNoteIcon />} label="Transpose" value={String(sheet.transpose)} />
+              </div>
               <FluidButton asChild className="w-full">
                 <a href={rawUrl} target="_blank" rel="noreferrer">
                   <GithubLogoIcon />
                   Edit on GitHub
                 </a>
               </FluidButton>
-            </div>
+            </FluidPanel>
           </aside>
         </div>
       </div>
@@ -99,12 +101,12 @@ export function SheetPage() {
 
 function Info({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <FluidPanel className="flex items-center justify-between gap-4 p-3 text-sm">
+    <div className="flex items-center justify-between gap-4 rounded-lg px-2 py-2 text-sm">
       <div className="flex items-center gap-2 text-muted-foreground">
         <span className="[&_svg]:size-4">{icon}</span>
         {label}
       </div>
       <div className="font-medium">{value}</div>
-    </FluidPanel>
+    </div>
   );
 }
