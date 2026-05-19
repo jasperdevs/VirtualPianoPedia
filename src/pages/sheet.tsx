@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type React from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeftIcon, ClipboardTextIcon, GithubLogoIcon, GaugeIcon, MetronomeIcon, MusicNoteIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, GithubLogoIcon, GaugeIcon, MetronomeIcon, MusicNoteIcon, StarIcon } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FluidCopy } from "@/components/fluid/FluidCopy";
+import { useFavorites } from "@/lib/favorites";
 import { SheetPlayer } from "@/components/SheetPlayer";
 import { getSheet, tierClass } from "@/lib/sheets";
 import { cn } from "@/lib/utils";
@@ -12,11 +14,12 @@ export function SheetPage() {
   const { slug } = useParams();
   const sheet = slug ? getSheet(slug) : undefined;
   const [variantIndex, setVariantIndex] = useState(0);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!sheet) return <Navigate to="/" replace />;
 
   const activeVariant = sheet.variants[variantIndex] ?? sheet.variants[0];
-  const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}.md`;
+  const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}/${activeVariant.fileName}`;
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
@@ -38,8 +41,16 @@ export function SheetPage() {
               </Badge>
             ))}
           </div>
-          <h1 className="max-w-4xl text-4xl font-semibold tracking-tight sm:text-6xl">{sheet.title}</h1>
-          <p className="mt-3 text-xl text-muted-foreground">{sheet.artist}</p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="max-w-4xl text-4xl font-semibold tracking-tight sm:text-6xl">{sheet.title}</h1>
+              <p className="mt-3 text-xl text-muted-foreground">{sheet.artist}</p>
+            </div>
+            <Button variant="outline" onClick={() => toggleFavorite(sheet.slug)}>
+              <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
+              {isFavorite(sheet.slug) ? "Favorited" : "Favorite"}
+            </Button>
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-2">
             {sheet.variants.map((variant, index) => (
@@ -62,10 +73,7 @@ export function SheetPage() {
           <div className="mt-6 overflow-hidden rounded-[1.25rem] bg-muted/45">
             <div className="flex items-center justify-between gap-3 px-4 py-3">
               <span className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(activeVariant.tier))}>{activeVariant.tier}</span>
-              <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(activeVariant.body)}>
-                <ClipboardTextIcon />
-                Copy
-              </Button>
+              <FluidCopy value={activeVariant.body} />
             </div>
             <pre className="max-h-[720px] overflow-auto px-5 pb-5 pt-2 font-mono text-sm leading-7 text-foreground">{activeVariant.body}</pre>
           </div>

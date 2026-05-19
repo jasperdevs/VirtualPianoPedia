@@ -1,12 +1,14 @@
 import { useState } from "react";
 import type React from "react";
-import { ArrowUpRightIcon, ClipboardTextIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon, PlayIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon, PlayIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FluidButton } from "@/components/fluid/FluidButton";
+import { FluidCopy } from "@/components/fluid/FluidCopy";
+import { FluidSwitch } from "@/components/fluid/FluidSwitch";
 import { SheetPlayer } from "@/components/SheetPlayer";
 import { convertInput, type ConversionResult } from "@/lib/converter";
-import { cn } from "@/lib/utils";
 
 export function ConverterPage() {
   const [text, setText] = useState("C4 D4 E4 G4 A4\nC5 B4 A4 G4");
@@ -14,7 +16,7 @@ export function ConverterPage() {
   const [sustain, setSustain] = useState(true);
   const [groupChords, setGroupChords] = useState(true);
   const [includeTiming, setIncludeTiming] = useState(false);
-  const [fileName, setFileName] = useState("converted-sheet.md");
+  const [fileName, setFileName] = useState("converted-sheet.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [error, setError] = useState("");
 
@@ -23,7 +25,7 @@ export function ConverterPage() {
     try {
       const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming });
       setResult(converted);
-      setFileName(`${converted.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "converted-sheet"}.md`);
+      setFileName(`${converted.folderSlug}-files.txt`);
     } catch (conversionError) {
       setError(conversionError instanceof Error ? conversionError.message : "Could not convert that file.");
     }
@@ -74,9 +76,9 @@ export function ConverterPage() {
                 <Input type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
               </Field>
               <div className="grid gap-2">
-                <Toggle enabled={sustain} onChange={setSustain} label="Mark sustain" />
-                <Toggle enabled={groupChords} onChange={setGroupChords} label="Group chords" />
-                <Toggle enabled={includeTiming} onChange={setIncludeTiming} label="Timing hints" />
+                <FluidSwitch enabled={sustain} onChange={setSustain} label="Mark sustain" />
+                <FluidSwitch enabled={groupChords} onChange={setGroupChords} label="Group chords" />
+                <FluidSwitch enabled={includeTiming} onChange={setIncludeTiming} label="Timing hints" />
               </div>
             </div>
           </section>
@@ -85,10 +87,10 @@ export function ConverterPage() {
             <Field label="Paste notes">
               <Textarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-36 bg-background font-mono" />
             </Field>
-            <Button className="mt-4 w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
+            <FluidButton className="mt-4 w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
               <MagicWandIcon />
               Generate sheet
-            </Button>
+            </FluidButton>
             {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
           </section>
         </div>
@@ -104,10 +106,7 @@ export function ConverterPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(result.markdown)}>
-                    <ClipboardTextIcon />
-                    Copy
-                  </Button>
+                  <FluidCopy value={result.markdown} />
                   <Button variant="outline" size="sm" onClick={downloadMarkdown}>
                     <DownloadSimpleIcon />
                     Download
@@ -115,11 +114,18 @@ export function ConverterPage() {
                 </div>
               </div>
               <SheetPlayer sheet={result.sheet} />
-              <Textarea value={result.markdown} readOnly className="min-h-[430px] bg-background font-mono" />
+              <div className="grid gap-3">
+                <Field label={`_meta.md for ${result.folderSlug}`}>
+                  <Textarea value={result.metaMarkdown} readOnly className="min-h-40 bg-background font-mono" />
+                </Field>
+                <Field label="normal.md">
+                  <Textarea value={result.variantMarkdown} readOnly className="min-h-52 bg-background font-mono" />
+                </Field>
+              </div>
               <Button asChild className="w-full">
-                <a href="https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets" target="_blank" rel="noreferrer">
+                <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${result.folderSlug}?filename=_meta.md`} target="_blank" rel="noreferrer">
                   <GithubLogoIcon />
-                  Open GitHub PR path
+                  Create folder on GitHub
                   <ArrowUpRightIcon />
                 </a>
               </Button>
@@ -143,20 +149,5 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="text-sm font-medium">{label}</span>
       {children}
     </label>
-  );
-}
-
-function Toggle({ enabled, onChange, label }: { enabled: boolean; onChange: (enabled: boolean) => void; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onChange(!enabled)}
-      className="flex items-center justify-between rounded-lg bg-background px-3 py-2 text-sm transition active:scale-[0.98]"
-    >
-      {label}
-      <span className={cn("h-5 w-9 rounded-full p-0.5 transition", enabled ? "bg-foreground" : "bg-muted")}>
-        <span className={cn("block size-4 rounded-full bg-background transition-transform", enabled && "translate-x-4")} />
-      </span>
-    </button>
   );
 }

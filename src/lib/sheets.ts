@@ -1,8 +1,9 @@
-export const difficultyTiers = ["Starter", "Standard", "Advanced", "Expert"] as const;
+export const difficultyTiers = ["Easy", "Normal", "Hard", "Expert"] as const;
 export type DifficultyTier = (typeof difficultyTiers)[number];
 
 export type SheetVariant = {
   tier: DifficultyTier;
+  fileName: string;
   body: string;
 };
 
@@ -22,37 +23,84 @@ export type Sheet = {
   body: string;
 };
 
-type SheetModule = {
-  frontmatter: Omit<Sheet, "slug" | "body" | "variants">;
+type MetaFrontmatter = Omit<Sheet, "slug" | "body" | "variants" | "difficulty">;
+
+type MarkdownModule = {
+  frontmatter: Partial<MetaFrontmatter>;
   body: string;
 };
 
-const sheetModules = import.meta.glob<SheetModule>("../content/sheets/*.md", {
+const modules = import.meta.glob<MarkdownModule>("../content/sheets/**/*.md", {
   eager: true,
   query: "?sheet",
   import: "default",
 });
 
-export const sheets = Object.entries(sheetModules)
-  .map(([path, sheet]) => {
-    const body = sheet.body.trim();
-    const variants = parseVariants(body, sheet.frontmatter.difficulty);
+const tierByFileName = new Map<string, DifficultyTier>([
+  ["easy", "Easy"],
+  ["normal", "Normal"],
+  ["hard", "Hard"],
+  ["expert", "Expert"],
+]);
+
+const grouped = new Map<string, { meta?: MetaFrontmatter; variants: SheetVariant[] }>();
+
+for (const [path, mod] of Object.entries(modules)) {
+  const parts = path.split("/");
+  const fileName = parts.pop()?.replace(".md", "") ?? "";
+  const slug = parts.pop() ?? "sheet";
+  const entry = grouped.get(slug) ?? { variants: [] };
+
+  if (fileName === "_meta") {
+    entry.meta = mod.frontmatter as MetaFrontmatter;
+  } else {
+    const tier = tierByFileName.get(fileName.toLowerCase());
+    if (tier) {
+      entry.variants.push({
+        tier,
+        fileName: `${fileName}.md`,
+        body: mod.body.trim(),
+      });
+    }
+  }
+
+  grouped.set(slug, entry);
+}
+
+export const sheets: Sheet[] = Array.from(grouped.entries())
+  .map(([slug, entry]) => {
+    const sortedVariants = entry.variants.sort((a, b) => difficultyTiers.indexOf(a.tier) - difficultyTiers.indexOf(b.tier));
+    const meta = entry.meta ?? {
+      title: slug,
+      artist: "Unknown",
+      game: "Roblox Virtual Piano",
+      category: "Unsorted",
+      tempo: 100,
+      length: "00:00",
+      transpose: 0,
+      source: "Local sheet",
+      tags: [],
+    };
 
     return {
-      slug: path.split("/").pop()?.replace(".md", "") ?? "sheet",
-      ...sheet.frontmatter,
-      variants,
-      body: variants[0]?.body ?? body,
+      slug,
+      ...meta,
+      difficulty: sortedVariants[0]?.tier ?? "Normal",
+      tags: meta.tags ?? [],
+      variants: sortedVariants,
+      body: sortedVariants[0]?.body ?? "",
     };
   })
+  .filter((sheet) => sheet.variants.length)
   .sort((a, b) => a.title.localeCompare(b.title));
 
 export const categoryNav = [
   "All Sheets",
+  "Favorites",
   "Trending",
-  "Starter",
-  "Standard",
-  "Advanced",
+  "Easy",
+  "Normal",
+  "Hard",
   "Expert",
   "Video Game",
   "Anime",
@@ -69,12 +117,13 @@ export function getSheet(slug: string) {
   return sheets.find((sheet) => sheet.slug === slug);
 }
 
-export function getCategoryCount(category: string) {
-  return filterByCategory(sheets, category).length;
+export function getCategoryCount(category: string, favorites: string[] = []) {
+  return filterByCategory(sheets, category, favorites).length;
 }
 
-export function filterByCategory(items: Sheet[], category: string) {
+export function filterByCategory(items: Sheet[], category: string, favorites: string[] = []) {
   if (category === "All Sheets") return items;
+  if (category === "Favorites") return items.filter((sheet) => favorites.includes(sheet.slug));
   if (category === "Trending") return items.filter((sheet) => sheet.tags.some((tag) => ["fast", "popular", "piano"].includes(tag)));
   if (difficultyTiers.includes(category as DifficultyTier)) return items.filter((sheet) => sheet.variants.some((variant) => variant.tier === category));
   if (category === "Player Requests") return items.filter((sheet) => sheet.tags.includes("request"));
@@ -99,24 +148,10 @@ export function sortSheets(items: Sheet[], mode: "hot" | "az" | "length") {
 }
 
 export function tierClass(tier: string) {
-  if (tier === "Starter") return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
-  if (tier === "Standard") return "bg-sky-500/10 text-sky-600 dark:text-sky-400";
-  if (tier === "Advanced") return "bg-amber-500/10 text-amber-700 dark:text-amber-300";
+  if (tier === "Easy") return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
+  if (tier === "Normal") return "bg-sky-500/10 text-sky-600 dark:text-sky-400";
+  if (tier === "Hard") return "bg-amber-500/10 text-amber-700 dark:text-amber-300";
   return "bg-rose-500/10 text-rose-600 dark:text-rose-400";
-}
-
-function parseVariants(body: string, fallback: DifficultyTier): SheetVariant[] {
-  const matches = Array.from(body.matchAll(/^##\s+(Starter|Standard|Advanced|Expert)\s*$/gim));
-  if (!matches.length) return [{ tier: fallback, body }];
-
-  return matches.map((match, index) => {
-    const start = (match.index ?? 0) + match[0].length;
-    const end = matches[index + 1]?.index ?? body.length;
-    return {
-      tier: match[1] as DifficultyTier,
-      body: body.slice(start, end).trim(),
-    };
-  });
 }
 
 function parseLength(length: string) {

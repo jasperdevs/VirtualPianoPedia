@@ -53,6 +53,17 @@ function sheetMarkdownPlugin(): Plugin {
 export default defineConfig({
   plugins: [react(), sheetMarkdownPlugin()],
   base: "/VirtualPianoPedia/",
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          motion: ["framer-motion"],
+          midi: ["@tonejs/midi"],
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
