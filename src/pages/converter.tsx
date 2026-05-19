@@ -61,27 +61,18 @@ export function ConverterPage() {
   }
 
   return (
-    <section className="relative min-h-[calc(100dvh-4rem)] overflow-hidden px-4 py-8 sm:px-6 lg:px-10">
-      <img
-        src="/VirtualPianoPedia/assets/piano-macro-bg.png"
-        alt=""
-        className="absolute right-0 top-0 h-[420px] w-full object-cover object-right-top opacity-95 brightness-[2.05] contrast-125 dark:brightness-[1.65]"
-      />
-      <div className="absolute inset-x-0 top-0 h-[520px] bg-[linear-gradient(180deg,hsl(var(--background)/0.05)_0%,hsl(var(--background)/0.5)_54%,hsl(var(--background))_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background))_0%,hsl(var(--background)/0.86)_40%,hsl(var(--background)/0.28)_74%,hsl(var(--background)/0.72)_100%)]" />
-      <div className="relative mx-auto w-full max-w-[1500px] min-w-0">
-        <div className="max-w-3xl">
+    <section className="min-h-[calc(100dvh-4rem)] bg-background px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1180px] min-w-0">
+        <div className="border-b border-border/70 pb-6">
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet</h1>
-          <p className="mt-4 max-w-xl text-muted-foreground">
-            Drop MIDI, preview, edit, publish to GitHub
-          </p>
+          <p className="mt-3 max-w-xl text-muted-foreground">Drop MIDI, preview it, edit the files, then publish to GitHub.</p>
         </div>
 
-      <div className="mt-8 grid min-w-0 gap-5 lg:grid-cols-[0.76fr_1.24fr]">
+      <div className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
         <div className="min-w-0 space-y-5">
-          <FluidPanel className="overflow-hidden p-4 sm:p-5 bg-card/82 backdrop-blur-md">
+          <FluidPanel className="overflow-hidden border border-border/70 bg-card p-4 sm:p-5">
             <motion.label
-              className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-6 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
+              className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-5 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.99 }}
               transition={{ type: "spring", stiffness: 520, damping: 36 }}
@@ -102,7 +93,7 @@ export function ConverterPage() {
               />
             </motion.label>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3">
               <Field label="Transpose">
                 <FluidInput type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
               </Field>
@@ -114,9 +105,9 @@ export function ConverterPage() {
             </div>
           </FluidPanel>
 
-          <FluidPanel className="overflow-hidden p-4 sm:p-5 bg-card/82 backdrop-blur-md">
+          <FluidPanel className="overflow-hidden border border-border/70 bg-card p-4 sm:p-5">
             <Field label="Paste notes">
-              <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-36 font-mono" />
+              <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-28 font-mono" />
             </Field>
             <FluidButton className="mt-4 w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
               <MagicWandIcon />
@@ -126,7 +117,7 @@ export function ConverterPage() {
           </FluidPanel>
         </div>
 
-        <FluidPanel className="min-w-0 p-4 sm:p-5 bg-card/82 backdrop-blur-md">
+        <FluidPanel className="min-w-0 border border-border/70 bg-card p-4 sm:p-5">
           {result ? (
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -170,7 +161,7 @@ export function ConverterPage() {
               </FluidButton>
             </div>
           ) : (
-            <div className="flex min-h-[680px] flex-col items-center justify-center rounded-[1.25rem] bg-background px-6 text-center">
+            <div className="flex min-h-[520px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
               <PlayIcon className="mb-5 size-12 text-muted-foreground" />
               <h2 className="text-2xl font-semibold tracking-tight">Awaiting input</h2>
               <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and copy a sheet</p>

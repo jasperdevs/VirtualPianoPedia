@@ -44,49 +44,43 @@ export function HomePage() {
   const filteredSheets = sortSheets(searchSheets(filterByCategory(sheets, category, favorites), query), sort);
 
   return (
-    <section className="relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-background">
-      <img
-        src="/VirtualPianoPedia/assets/piano-macro-bg.png"
-        alt=""
-        className="absolute right-0 top-0 h-[430px] w-full object-cover object-right-top opacity-95 brightness-[2.05] contrast-125 dark:brightness-[1.7]"
-      />
-      <div className="absolute inset-x-0 top-0 h-[520px] bg-[linear-gradient(180deg,hsl(var(--background)/0.08)_0%,hsl(var(--background)/0.42)_48%,hsl(var(--background))_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background))_0%,hsl(var(--background)/0.84)_28%,hsl(var(--background)/0.36)_58%,hsl(var(--background)/0.72)_100%)]" />
-
-      <div className="relative grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[290px_1fr]">
-        <aside className="min-w-0 border-b border-border/40 bg-background/45 p-4 backdrop-blur-sm md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:border-b-0 md:border-r md:bg-background/35">
+    <section className="min-h-[calc(100dvh-4rem)] bg-background">
+      <div className="grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[280px_1fr]">
+        <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-4 md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:border-b-0 md:border-r">
           <div className="flex gap-2 overflow-x-auto pb-2 md:block md:space-y-1 md:overflow-visible">
-              {categoryNav.map((item) => {
-                const CategoryIcon = categoryIcons[item] ?? MusicNotesIcon;
+            {categoryNav.map((item) => {
+              const CategoryIcon = categoryIcons[item] ?? MusicNotesIcon;
 
-                return (
-                  <motion.button
-                    key={item}
-                    type="button"
-                    onClick={() => setCategory(item)}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ type: "spring", stiffness: 520, damping: 36 }}
-                    className={cn(
-                      "inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition-[background-color,color,font-weight] hover:bg-muted/70 hover:text-foreground md:w-full",
-                      category === item && "bg-foreground text-background shadow-[0_18px_50px_-38px_rgba(0,0,0,0.65)]",
-                    )}
-                  >
-                    <CategoryIcon className="size-4" />
-                    {item}
-                    <span className="ml-auto hidden text-xs tabular-nums text-muted-foreground md:inline">{getCategoryCount(item, favorites)}</span>
-                  </motion.button>
-                );
-              })}
+              return (
+                <motion.button
+                  key={item}
+                  type="button"
+                  onClick={() => setCategory(item)}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 520, damping: 36 }}
+                  className={cn(
+                    "inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition-[background-color,color,font-weight] hover:bg-background hover:text-foreground md:w-full",
+                    category === item && "bg-background text-foreground ring-1 ring-border/70",
+                  )}
+                >
+                  <CategoryIcon className="size-4" />
+                  {item}
+                  <span className="ml-auto hidden text-xs tabular-nums text-muted-foreground md:inline">{getCategoryCount(item, favorites)}</span>
+                </motion.button>
+              );
+            })}
           </div>
         </aside>
 
-        <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-5 sm:p-8 lg:p-12">
-          <div className="mx-auto w-full max-w-[1180px] min-w-0">
-            <div className="max-w-4xl pt-8 sm:pt-14">
-              <div className="mb-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Roblox piano archive</div>
-              <h1 className="max-w-full break-words text-4xl font-semibold leading-[0.94] tracking-tight sm:text-6xl lg:text-7xl">VirtualPianoPedia</h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">Roblox virtual piano sheets, organized like a wiki</p>
-              <div className="mt-8 flex w-full max-w-3xl flex-col gap-3 sm:flex-row">
+        <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-[1040px] min-w-0">
+            <div className="flex flex-col gap-5 border-b border-border/70 pb-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="min-w-0">
+                <div className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Roblox piano archive</div>
+                <h1 className="max-w-full break-words text-4xl font-semibold leading-[0.96] tracking-tight sm:text-5xl">VirtualPianoPedia</h1>
+                <p className="mt-3 max-w-xl text-base leading-7 text-muted-foreground">Browse sheets by category, save favorites, or convert a MIDI into a sheet.</p>
+              </div>
+              <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-[520px]">
                 <FluidInput icon={<MagnifyingGlassIcon />} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" />
                 <FluidButton asChild size="lg">
                   <Link to="/converter">
@@ -97,7 +91,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <div className="mb-5 flex flex-wrap gap-2">
+            <div className="mb-5 mt-6 flex flex-wrap gap-2">
               {quickSearches.map((tag) => (
                 <motion.button
                   key={tag}
@@ -113,7 +107,7 @@ export function HomePage() {
               ))}
             </div>
 
-            <div className="mt-10 max-w-[820px] overflow-hidden rounded-[1.35rem] bg-card/78 shadow-[0_22px_90px_-70px_rgba(255,255,255,0.45)] ring-1 ring-border/55 backdrop-blur-md">
+            <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
               <div className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
@@ -173,7 +167,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
   return (
     <motion.div
-      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-3 py-3 transition-colors hover:bg-muted/55 sm:grid-cols-[32px_64px_minmax(0,1fr)]"
+      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-3 py-3 transition-colors hover:bg-muted/45 sm:grid-cols-[32px_64px_minmax(0,1fr)]"
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.995 }}
       transition={{ type: "spring", stiffness: 520, damping: 38 }}
