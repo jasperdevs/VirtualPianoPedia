@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
+        <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 md:flex-nowrap">
           <Link to="/" className="flex items-center gap-3">
             <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="size-9 rounded-md" />
             <div>
@@ -29,7 +29,7 @@ export default function App() {
             </div>
           </Link>
 
-          <nav className="hidden items-center rounded-full bg-muted/80 p-1 md:flex">
+          <nav className="order-3 mx-auto flex items-center rounded-full bg-muted/80 p-1 md:order-none md:mx-0">
             {navItems.map((item) => {
               const isActive = item.href === "/" ? location.pathname === "/" || location.pathname.startsWith("/sheet") : location.pathname.startsWith(item.href);
 

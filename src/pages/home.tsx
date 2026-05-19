@@ -167,7 +167,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
   return (
     <motion.div
-      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/45 sm:grid-cols-[32px_60px_minmax(0,1fr)]"
+      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/45 md:grid-cols-[32px_60px_minmax(0,1fr)_auto]"
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.995 }}
       transition={{ type: "spring", stiffness: 520, damping: 38 }}
@@ -197,13 +197,13 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
             </span>
           </div>
         </div>
-        <div className="col-span-3 flex flex-wrap gap-1.5 sm:col-span-1 sm:col-start-3 sm:justify-start">
+        <div className="col-span-3 flex flex-wrap gap-1.5 pl-12 md:col-span-1 md:col-start-4 md:justify-end md:pl-0">
           {sheet.variants.map((variant) => (
             <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
               {variant.tier}
             </span>
           ))}
-          <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" />
+          <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:block" />
         </div>
       </Link>
     </motion.div>

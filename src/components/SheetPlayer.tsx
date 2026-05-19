@@ -61,39 +61,41 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
   }
 
   return (
-    <FluidPanel className={cn("p-4", className)}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <SpeakerHighIcon className="size-4" />
-            Preview
+    <FluidPanel className={cn("overflow-hidden", className)}>
+      <div className="p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <SpeakerHighIcon className="size-4" />
+              Preview
+            </div>
+            <div className="mt-1 text-xs text-muted-foreground">{loading ? "Loading piano samples" : `${tokens.length} playable notes detected`}</div>
           </div>
-          <div className="mt-1 text-xs text-muted-foreground">{loading ? "Loading piano samples" : `${tokens.length} playable notes detected`}</div>
+          <div className="flex gap-2">
+            <FluidButton onClick={playing ? stop : play} size="sm">
+              {playing ? <PauseIcon /> : <PlayIcon />}
+              {playing ? "Pause" : "Play"}
+            </FluidButton>
+            <FluidButton onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null}>
+              <StopIcon />
+              Stop
+            </FluidButton>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <FluidButton onClick={playing ? stop : play} size="sm">
-            {playing ? <PauseIcon /> : <PlayIcon />}
-            {playing ? "Pause" : "Play"}
-          </FluidButton>
-          <FluidButton onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null}>
-            <StopIcon />
-            Stop
-          </FluidButton>
+        {error ? <div className="mt-3 text-xs text-destructive">{error}</div> : null}
+        <div className="mt-4 flex max-h-32 flex-wrap gap-1.5 overflow-auto rounded-xl bg-background/45 p-3 font-mono text-xs ring-1 ring-border/50 [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]">
+          {tokens.slice(0, 180).map((token, index) => (
+            <span
+              key={`${token.label}-${index}`}
+              className={cn(
+                "rounded-md px-2 py-1 text-muted-foreground transition-colors",
+                activeIndex === index ? "bg-foreground text-background" : "bg-background",
+              )}
+            >
+              {token.label}
+            </span>
+          ))}
         </div>
-      </div>
-      {error ? <div className="mt-3 text-xs text-destructive">{error}</div> : null}
-      <div className="mt-4 flex max-h-32 flex-wrap gap-1.5 overflow-auto font-mono text-xs">
-        {tokens.slice(0, 180).map((token, index) => (
-          <span
-            key={`${token.label}-${index}`}
-            className={cn(
-              "rounded-md px-2 py-1 text-muted-foreground transition",
-              activeIndex === index ? "bg-foreground text-background" : "bg-background",
-            )}
-          >
-            {token.label}
-          </span>
-        ))}
       </div>
     </FluidPanel>
   );
