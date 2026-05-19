@@ -63,12 +63,13 @@ export function ConverterPage() {
   return (
     <section className="min-h-[calc(100dvh-4rem)] bg-background px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[1180px] min-w-0">
-        <div className="border-b border-border/70 pb-6">
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet</h1>
-          <p className="mt-3 max-w-xl text-muted-foreground">Drop MIDI, preview it, edit the files, then publish to GitHub.</p>
+        <div className="border-b border-border/70 pb-5">
+          <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Tool</div>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Converter</h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Drop MIDI or paste notes, preview the result, then edit the GitHub files.</p>
         </div>
 
-      <div className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
+      <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
         <div className="min-w-0 space-y-5">
           <FluidPanel className="overflow-hidden border border-border/70 bg-card p-4 sm:p-5">
             <motion.label
@@ -77,7 +78,7 @@ export function ConverterPage() {
               whileTap={{ scale: 0.99 }}
               transition={{ type: "spring", stiffness: 520, damping: 36 }}
             >
-              <FileArrowUpIcon className="mb-4 size-10 text-muted-foreground" />
+              <FileArrowUpIcon className="mb-3 size-9 text-muted-foreground" />
               <span className="font-semibold">Upload MIDI or text</span>
               <span className="mt-1 text-sm text-muted-foreground">.mid, .midi, .txt, or .md</span>
               <input
@@ -161,10 +162,10 @@ export function ConverterPage() {
               </FluidButton>
             </div>
           ) : (
-            <div className="flex min-h-[520px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
+            <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
               <PlayIcon className="mb-5 size-12 text-muted-foreground" />
-              <h2 className="text-2xl font-semibold tracking-tight">Awaiting input</h2>
-              <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and copy a sheet</p>
+              <h2 className="text-2xl font-semibold tracking-tight">No sheet yet</h2>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and edit the output.</p>
             </div>
           )}
         </FluidPanel>

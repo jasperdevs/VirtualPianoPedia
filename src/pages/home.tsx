@@ -45,7 +45,7 @@ export function HomePage() {
 
   return (
     <section className="min-h-[calc(100dvh-4rem)] bg-background">
-      <div className="grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[280px_1fr]">
+      <div className="grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[260px_1fr]">
         <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-4 md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:border-b-0 md:border-r">
           <div className="flex gap-2 overflow-x-auto pb-2 md:block md:space-y-1 md:overflow-visible">
             {categoryNav.map((item) => {
@@ -73,12 +73,12 @@ export function HomePage() {
         </aside>
 
         <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto w-full max-w-[1040px] min-w-0">
-            <div className="flex flex-col gap-5 border-b border-border/70 pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mx-auto w-full max-w-[960px] min-w-0">
+            <div className="flex flex-col gap-5 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="min-w-0">
-                <div className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Roblox piano archive</div>
-                <h1 className="max-w-full break-words text-4xl font-semibold leading-[0.96] tracking-tight sm:text-5xl">VirtualPianoPedia</h1>
-                <p className="mt-3 max-w-xl text-base leading-7 text-muted-foreground">Browse sheets by category, save favorites, or convert a MIDI into a sheet.</p>
+                <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Library</div>
+                <h1 className="max-w-full break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Sheets</h1>
+                <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Find a song, pick a level, and open the sheet.</p>
               </div>
               <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-[520px]">
                 <FluidInput icon={<MagnifyingGlassIcon />} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" />
@@ -91,7 +91,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <div className="mb-5 mt-6 flex flex-wrap gap-2">
+            <div className="mb-4 mt-5 flex flex-wrap gap-2">
               {quickSearches.map((tag) => (
                 <motion.button
                   key={tag}
@@ -108,13 +108,13 @@ export function HomePage() {
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
-              <div className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="flex flex-col gap-4 border-b border-border/60 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{category}</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight">{category}</h2>
                     <FluidBadge color="white">{filteredSheets.length} songs</FluidBadge>
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground">Choose Easy, Normal, Hard, or Expert</p>
+                  <p className="mt-1.5 text-sm text-muted-foreground">Easy, Normal, Hard, and Expert can live under the same song.</p>
                 </div>
                 <FluidTabs items={["hot", "az", "length"] as SortMode[]} value={sort} onChange={setSort} />
               </div>
@@ -167,7 +167,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
   return (
     <motion.div
-      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-3 py-3 transition-colors hover:bg-muted/45 sm:grid-cols-[32px_64px_minmax(0,1fr)]"
+      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/45 sm:grid-cols-[32px_60px_minmax(0,1fr)]"
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.995 }}
       transition={{ type: "spring", stiffness: 520, damping: 38 }}
@@ -176,7 +176,7 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
       </motion.button>
       <Link to={`/sheet/${sheet.slug}`} className="contents text-foreground">
-        <div className="grid aspect-square place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
+        <div className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
           {sheet.title
             .split(" ")
             .slice(0, 2)

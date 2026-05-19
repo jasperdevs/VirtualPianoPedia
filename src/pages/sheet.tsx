@@ -34,7 +34,7 @@ export function SheetPage() {
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <div className="min-w-0">
-            <div className="mb-5 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap gap-2">
               <FluidBadge color="white">{sheet.category}</FluidBadge>
               <FluidBadge>{sheet.game}</FluidBadge>
               {sheet.tags.map((tag) => (
@@ -47,11 +47,11 @@ export function SheetPage() {
             <div className="flex flex-col gap-5">
               <div>
                 <h1 className="max-w-4xl text-4xl font-semibold leading-[0.98] tracking-tight sm:text-5xl">{sheet.title}</h1>
-                <p className="mt-3 text-lg text-muted-foreground">{sheet.artist}</p>
+                <p className="mt-2 text-lg text-muted-foreground">{sheet.artist}</p>
               </div>
             </div>
 
-            <div className="mt-8 inline-flex flex-wrap rounded-full bg-muted/70 p-1">
+            <div className="mt-6 inline-flex flex-wrap rounded-full bg-muted/70 p-1">
               {sheet.variants.map((variant, index) => (
                 <FluidChoice
                   key={variant.tier}
@@ -66,7 +66,7 @@ export function SheetPage() {
             <SheetPlayer sheet={activeVariant.body} className="mt-6" />
 
             <FluidPanel className="mt-6 overflow-hidden border border-border/70 bg-card">
-              <div className="flex items-center justify-between gap-3 px-4 py-3">
+              <div className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
                 <FluidBadge>{activeVariant.tier}</FluidBadge>
                 <FluidCopy value={activeVariant.body} />
               </div>
@@ -74,7 +74,7 @@ export function SheetPage() {
             </FluidPanel>
           </div>
 
-          <aside className="space-y-3 lg:pt-24">
+          <aside className="space-y-3 lg:sticky lg:top-24 lg:self-start lg:pt-24">
             <FluidButton variant="outline" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
               <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
               {isFavorite(sheet.slug) ? "Saved" : "Save"}
