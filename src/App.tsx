@@ -68,10 +68,10 @@ export default function App() {
         </Routes>
       </main>
 
-      <footer className="bg-muted/35">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <div>Sheets, variants, converter, playback, no accounts</div>
-          <div className="flex items-center gap-4">
+      <footer className="border-t border-border/70 bg-muted/20">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+          <div className="font-medium text-foreground">VirtualPianoPedia</div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link to="/converter" className="inline-flex items-center gap-1 text-foreground hover:underline">
               <SparkleIcon className="size-4" />
               Convert
@@ -80,6 +80,10 @@ export default function App() {
               <MagnifyingGlassIcon className="size-4" />
               Browse
             </Link>
+            <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground hover:underline">
+              <GithubLogoIcon className="size-4" />
+              GitHub
+            </a>
           </div>
         </div>
       </footer>

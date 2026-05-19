@@ -47,7 +47,7 @@ export function HomePage() {
     <section className="min-h-[calc(100dvh-4rem)] bg-background">
       <div className="grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[260px_1fr]">
         <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-4 md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:border-b-0 md:border-r">
-          <div className="flex gap-2 overflow-x-auto pb-2 md:block md:space-y-1 md:overflow-visible">
+          <div className="flex gap-2 overflow-x-auto pb-2 [mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] md:block md:space-y-1 md:overflow-visible md:[mask-image:none]">
             {categoryNav.map((item) => {
               const CategoryIcon = categoryIcons[item] ?? MusicNotesIcon;
 
@@ -96,11 +96,14 @@ export function HomePage() {
                 <motion.button
                   key={tag}
                   type="button"
-                  onClick={() => setQuery(tag)}
+                  onClick={() => setQuery(query === tag ? "" : tag)}
                   whileHover={{ y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 520, damping: 36 }}
-                  className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition-[background-color,color] hover:bg-foreground hover:text-background"
+                  className={cn(
+                    "rounded-full px-3 py-1 text-xs transition-[background-color,color] hover:bg-foreground hover:text-background",
+                    query === tag ? "bg-foreground text-background" : "bg-muted text-muted-foreground",
+                  )}
                 >
                   {tag}
                 </motion.button>
