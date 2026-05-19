@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type React from "react";
+import { motion } from "framer-motion";
 import { ArrowUpRightIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon, PlayIcon } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { FluidButton } from "@/components/fluid/FluidButton";
 import { FluidCopy } from "@/components/fluid/FluidCopy";
+import { FluidInput } from "@/components/fluid/FluidInput";
+import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { FluidSwitch } from "@/components/fluid/FluidSwitch";
+import { FluidTextarea } from "@/components/fluid/FluidTextarea";
 import { SheetPlayer } from "@/components/SheetPlayer";
 import { convertInput, type ConversionResult } from "@/lib/converter";
 
@@ -53,8 +54,13 @@ export function ConverterPage() {
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="space-y-5">
-          <section className="rounded-[1.5rem] bg-muted/50 p-4 sm:p-5">
-            <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-[1.25rem] bg-background p-6 text-center transition hover:scale-[0.99]">
+          <FluidPanel className="p-4 sm:p-5">
+            <motion.label
+              className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-6 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 520, damping: 36 }}
+            >
               <FileArrowUpIcon className="mb-4 size-10 text-muted-foreground" />
               <span className="font-semibold">Upload MIDI or text</span>
               <span className="mt-1 text-sm text-muted-foreground">.mid, .midi, .txt, or .md</span>
@@ -69,33 +75,33 @@ export function ConverterPage() {
                   await handleConvert(value, file.name);
                 }}
               />
-            </label>
+            </motion.label>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <Field label="Transpose">
-                <Input type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
+                <FluidInput type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
               </Field>
-              <div className="grid gap-2">
-                <FluidSwitch enabled={sustain} onChange={setSustain} label="Mark sustain" />
-                <FluidSwitch enabled={groupChords} onChange={setGroupChords} label="Group chords" />
-                <FluidSwitch enabled={includeTiming} onChange={setIncludeTiming} label="Timing hints" />
+              <div className="grid gap-2 rounded-2xl bg-background/35 p-2">
+                <FluidSwitch enabled={sustain} onChange={setSustain} label="Sustain" hint="Keep held notes longer" />
+                <FluidSwitch enabled={groupChords} onChange={setGroupChords} label="Chords" hint="Merge notes that start together" />
+                <FluidSwitch enabled={includeTiming} onChange={setIncludeTiming} label="Timing hints" hint="Show rough rests" />
               </div>
             </div>
-          </section>
+          </FluidPanel>
 
-          <section className="rounded-[1.5rem] bg-muted/50 p-4 sm:p-5">
+          <FluidPanel className="p-4 sm:p-5">
             <Field label="Paste notes">
-              <Textarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-36 bg-background font-mono" />
+              <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-36 font-mono" />
             </Field>
             <FluidButton className="mt-4 w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
               <MagicWandIcon />
               Generate sheet
             </FluidButton>
             {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
-          </section>
+          </FluidPanel>
         </div>
 
-        <section className="rounded-[1.5rem] bg-muted/50 p-4 sm:p-5">
+        <FluidPanel className="p-4 sm:p-5">
           {result ? (
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -107,28 +113,28 @@ export function ConverterPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <FluidCopy value={result.markdown} />
-                  <Button variant="outline" size="sm" onClick={downloadMarkdown}>
+                  <FluidButton variant="outline" size="sm" onClick={downloadMarkdown}>
                     <DownloadSimpleIcon />
                     Download
-                  </Button>
+                  </FluidButton>
                 </div>
               </div>
               <SheetPlayer sheet={result.sheet} />
               <div className="grid gap-3">
                 <Field label={`_meta.md for ${result.folderSlug}`}>
-                  <Textarea value={result.metaMarkdown} readOnly className="min-h-40 bg-background font-mono" />
+                  <FluidTextarea value={result.metaMarkdown} readOnly className="min-h-40 font-mono" />
                 </Field>
                 <Field label="normal.md">
-                  <Textarea value={result.variantMarkdown} readOnly className="min-h-52 bg-background font-mono" />
+                  <FluidTextarea value={result.variantMarkdown} readOnly className="min-h-52 font-mono" />
                 </Field>
               </div>
-              <Button asChild className="w-full">
+              <FluidButton asChild className="w-full">
                 <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${result.folderSlug}?filename=_meta.md`} target="_blank" rel="noreferrer">
                   <GithubLogoIcon />
                   Create folder on GitHub
                   <ArrowUpRightIcon />
                 </a>
-              </Button>
+              </FluidButton>
             </div>
           ) : (
             <div className="flex min-h-[680px] flex-col items-center justify-center rounded-[1.25rem] bg-background px-6 text-center">
@@ -137,7 +143,7 @@ export function ConverterPage() {
               <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and copy a sheet</p>
             </div>
           )}
-        </section>
+        </FluidPanel>
       </div>
     </section>
   );

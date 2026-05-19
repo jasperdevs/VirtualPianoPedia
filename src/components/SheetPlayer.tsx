@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PauseIcon, PlayIcon, SpeakerHighIcon, StopIcon } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
+import { FluidButton } from "@/components/fluid/FluidButton";
+import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { parsePlayableTokens, playToken, preloadPianoSamples } from "@/lib/playback";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +55,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
   }
 
   return (
-    <div className={cn("rounded-2xl bg-muted/55 p-4", className)}>
+    <FluidPanel className={cn("p-4", className)}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-sm font-medium">
@@ -64,14 +65,14 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
           <div className="mt-1 text-xs text-muted-foreground">{loading ? "Loading piano samples" : `${tokens.length} playable notes detected`}</div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={playing ? stop : play} size="sm">
+          <FluidButton onClick={playing ? stop : play} size="sm">
             {playing ? <PauseIcon /> : <PlayIcon />}
             {playing ? "Pause" : "Play"}
-          </Button>
-          <Button onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null}>
+          </FluidButton>
+          <FluidButton onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null}>
             <StopIcon />
             Stop
-          </Button>
+          </FluidButton>
         </div>
       </div>
       <div className="mt-4 flex max-h-32 flex-wrap gap-1.5 overflow-auto font-mono text-xs">
@@ -87,7 +88,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
           </span>
         ))}
       </div>
-    </div>
+    </FluidPanel>
   );
 }
 

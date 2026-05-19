@@ -1,6 +1,7 @@
-import { Link, NavLink, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, SparkleIcon, SunIcon } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
+import { FluidButton } from "@/components/fluid/FluidButton";
 import { HomePage } from "@/pages/home";
 import { SheetPage } from "@/pages/sheet";
 import { ConverterPage } from "@/pages/converter";
@@ -14,6 +15,7 @@ const navItems = [
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -27,33 +29,29 @@ export default function App() {
             </div>
           </Link>
 
-          <nav className="hidden items-center rounded-full bg-muted p-1 md:flex">
+          <nav className="hidden items-center rounded-full bg-muted/80 p-1 md:flex">
             {navItems.map((item) => (
-              <NavLink
+              <Link
                 key={item.href}
                 to={item.href}
-                className={({ isActive }) =>
-                  cn(
-                    "rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition active:scale-[0.98]",
-                    isActive && "bg-background text-foreground shadow-sm",
-                  )
-                }
+                className={cn("relative rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,font-weight] hover:text-foreground", location.pathname === item.href && "text-foreground")}
               >
-                {item.label}
-              </NavLink>
+                {location.pathname === item.href ? <motion.span layoutId="app-nav-active" className="absolute inset-0 rounded-full bg-background shadow-sm" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
+                <span className="relative">{item.label}</span>
+              </Link>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden text-muted-foreground hover:text-foreground sm:inline-flex">
+            <FluidButton asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer">
                 <GithubLogoIcon />
                 GitHub
               </a>
-            </Button>
-            <Button variant="outline" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+            </FluidButton>
+            <FluidButton variant="outline" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
               {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-            </Button>
+            </FluidButton>
           </div>
         </div>
       </header>

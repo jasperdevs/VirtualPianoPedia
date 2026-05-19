@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
   ArrowUpRightIcon,
@@ -23,9 +24,9 @@ import {
   UserSoundIcon,
   VinylRecordIcon,
 } from "@phosphor-icons/react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FluidBadge } from "@/components/fluid/FluidBadge";
+import { FluidButton } from "@/components/fluid/FluidButton";
+import { FluidInput } from "@/components/fluid/FluidInput";
 import { FluidTabs } from "@/components/fluid/FluidTabs";
 import { useFavorites } from "@/lib/favorites";
 import { categoryNav, filterByCategory, getCategoryCount, searchSheets, sheets, sortSheets, tierClass, type Sheet } from "@/lib/sheets";
@@ -51,16 +52,13 @@ export function HomePage() {
           Roblox piano sheets you can browse, save, convert, and play back
         </p>
         <div className="mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" className="h-11 pl-9" />
-          </div>
-          <Button asChild size="lg">
+          <FluidInput icon={<MagnifyingGlassIcon />} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" />
+          <FluidButton asChild size="lg">
             <Link to="/converter">
               <SparkleIcon />
               Convert
             </Link>
-          </Button>
+          </FluidButton>
         </div>
       </section>
 
@@ -72,19 +70,21 @@ export function HomePage() {
                 const CategoryIcon = categoryIcons[item] ?? MusicNotesIcon;
 
                 return (
-                  <button
+                  <motion.button
                     key={item}
                     type="button"
                     onClick={() => setCategory(item)}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 520, damping: 36 }}
                     className={cn(
-                      "inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-background hover:text-foreground active:scale-[0.98] md:w-full",
+                      "inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition-[background-color,color,font-weight] hover:bg-background/75 hover:text-foreground md:w-full",
                       category === item && "bg-background text-foreground shadow-[0_18px_50px_-38px_rgba(0,0,0,0.65)]",
                     )}
                   >
                     <CategoryIcon className="size-4" />
                     {item}
                     <span className="ml-auto hidden text-xs tabular-nums text-muted-foreground md:inline">{getCategoryCount(item, favorites)}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -95,7 +95,7 @@ export function HomePage() {
               <div>
                 <div className="flex items-center gap-3">
                   <h2 className="text-3xl font-semibold tracking-tight">{category}</h2>
-                  <Badge variant="secondary">{filteredSheets.length} songs</Badge>
+                  <FluidBadge color="white">{filteredSheets.length} songs</FluidBadge>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">Pick a song, then switch between Easy, Normal, Hard, and Expert</p>
               </div>
@@ -104,14 +104,17 @@ export function HomePage() {
 
             <div className="mb-5 flex flex-wrap gap-2">
               {quickSearches.map((tag) => (
-                <button
+                <motion.button
                   key={tag}
                   type="button"
                   onClick={() => setQuery(tag)}
-                  className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition hover:bg-foreground hover:text-background"
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 520, damping: 36 }}
+                  className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition-[background-color,color] hover:bg-foreground hover:text-background"
                 >
                   {tag}
-                </button>
+                </motion.button>
               ))}
             </div>
 
@@ -126,9 +129,9 @@ export function HomePage() {
                 <SparkleIcon className="mb-4 size-8 text-muted-foreground" />
                 <h3 className="text-xl font-semibold tracking-tight">No sheets here yet</h3>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">Convert one, copy the markdown, and open a GitHub pull request</p>
-                <Button asChild className="mt-5">
+                <FluidButton asChild className="mt-5">
                   <Link to="/converter">Open converter</Link>
-                </Button>
+                </FluidButton>
               </div>
             )}
           </div>
@@ -159,10 +162,15 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
   return (
-    <div className="group grid grid-cols-[32px_52px_1fr] items-center gap-4 rounded-xl p-2.5 transition hover:bg-muted/70 active:scale-[0.995] sm:grid-cols-[32px_64px_1fr_auto]">
-      <button type="button" onClick={onFavorite} className="grid size-8 place-items-center rounded-md transition hover:bg-background active:scale-[0.92]" aria-label={isFavorite ? "Remove favorite" : "Add favorite"}>
+    <motion.div
+      className="group grid grid-cols-[32px_52px_1fr] items-center gap-4 rounded-2xl p-2.5 transition-colors hover:bg-muted/70 sm:grid-cols-[32px_64px_1fr_auto]"
+      whileHover={{ x: 2 }}
+      whileTap={{ scale: 0.995 }}
+      transition={{ type: "spring", stiffness: 520, damping: 38 }}
+    >
+      <motion.button type="button" onClick={onFavorite} whileTap={{ scale: 0.9 }} className="grid size-8 place-items-center rounded-lg transition hover:bg-background" aria-label={isFavorite ? "Remove favorite" : "Add favorite"}>
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
-      </button>
+      </motion.button>
       <Link to={`/sheet/${sheet.slug}`} className="contents text-foreground">
         <div className="grid aspect-square place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
           {sheet.title
@@ -194,6 +202,6 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
           <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" />
         </div>
       </Link>
-    </div>
+    </motion.div>
   );
 }

@@ -1,22 +1,31 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export function FluidSwitch({ enabled, onChange, label }: { enabled: boolean; onChange: (enabled: boolean) => void; label: string }) {
+export function FluidSwitch({ enabled, onChange, label, hint }: { enabled: boolean; onChange: (enabled: boolean) => void; label: string; hint?: string }) {
   return (
-    <button
+    <motion.button
       type="button"
       onClick={() => onChange(!enabled)}
-      className="flex items-center justify-between rounded-xl bg-background px-3 py-2 text-sm transition active:scale-[0.98]"
+      aria-pressed={enabled}
+      whileTap={{ scale: 0.985 }}
+      transition={{ type: "spring", stiffness: 520, damping: 36 }}
+      className={cn(
+        "group flex w-full items-center justify-between gap-4 rounded-xl bg-background/55 p-2 pl-3 text-left text-sm outline-none ring-1 ring-transparent transition hover:bg-background/80 focus-visible:ring-ring/45",
+        enabled && "bg-background/85",
+      )}
     >
-      {label}
-      <span className={cn("relative h-5 w-9 rounded-full transition-colors", enabled ? "bg-foreground" : "bg-muted")}>
+      <span>
+        <span className={cn("block font-medium transition-[font-weight,color]", enabled ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>{label}</span>
+        {hint ? <span className="mt-0.5 block text-xs text-muted-foreground">{hint}</span> : null}
+      </span>
+      <span className={cn("relative h-7 w-12 shrink-0 rounded-full p-1 transition-colors", enabled ? "bg-foreground" : "bg-muted/80 group-hover:bg-muted")}>
         <motion.span
           layout
-          className="absolute top-0.5 size-4 rounded-full bg-background"
-          animate={{ x: enabled ? 18 : 2 }}
+          className={cn("absolute top-1 size-5 rounded-full shadow-sm", enabled ? "bg-background" : "bg-muted-foreground/55")}
+          animate={{ x: enabled ? 20 : 4 }}
           transition={{ type: "spring", stiffness: 520, damping: 34 }}
         />
       </span>
-    </button>
+    </motion.button>
   );
 }
