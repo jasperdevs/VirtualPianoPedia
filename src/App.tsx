@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, SparkleIcon, SunIcon } from "@phosphor-icons/react";
@@ -19,9 +20,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+      <RouteEffects pathname={location.pathname} />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95">
         <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 md:flex-nowrap">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring/45">
             <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="size-9 rounded-md" />
             <div>
               <div className="text-base font-semibold leading-none tracking-tight">VirtualPianoPedia</div>
@@ -37,7 +39,7 @@ export default function App() {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={cn("relative rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,font-weight] hover:text-foreground", isActive && "text-foreground")}
+                  className={cn("relative rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground outline-none transition-[color,font-weight] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/45", isActive && "text-foreground")}
                 >
                   {isActive ? <motion.span layoutId="app-nav-active" className="absolute inset-0 rounded-full bg-background shadow-sm" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
                   <span className="relative">{item.label}</span>
@@ -72,15 +74,15 @@ export default function App() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
           <div className="font-medium text-foreground">VirtualPianoPedia</div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link to="/converter" className="inline-flex items-center gap-1 text-foreground hover:underline">
+            <Link to="/converter" className="inline-flex items-center gap-1 rounded-md text-foreground outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/45">
               <SparkleIcon className="size-4" />
               Convert
             </Link>
-            <Link to="/" className="inline-flex items-center gap-1 text-foreground hover:underline">
+            <Link to="/" className="inline-flex items-center gap-1 rounded-md text-foreground outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/45">
               <MagnifyingGlassIcon className="size-4" />
               Browse
             </Link>
-            <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground hover:underline">
+            <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md text-foreground outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/45">
               <GithubLogoIcon className="size-4" />
               GitHub
             </a>
@@ -89,4 +91,12 @@ export default function App() {
       </footer>
     </div>
   );
+}
+
+function RouteEffects({ pathname }: { pathname: string }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
+
+  return null;
 }

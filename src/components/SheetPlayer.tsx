@@ -12,6 +12,7 @@ type SheetPlayerProps = {
 
 export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
   const tokens = useMemo(() => parsePlayableTokens(sheet), [sheet]);
+  const previewTokens = tokens.slice(0, 180);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -72,11 +73,11 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
             <div className="mt-1 text-xs text-muted-foreground">{loading ? "Loading piano samples" : `${tokens.length} playable notes detected`}</div>
           </div>
           <div className="flex gap-2">
-            <FluidButton onClick={playing ? stop : play} size="sm">
+            <FluidButton onClick={playing ? stop : play} size="sm" disabled={!tokens.length || loading}>
               {playing ? <PauseIcon /> : <PlayIcon />}
-              {playing ? "Pause" : "Play"}
+              {loading ? "Loading" : playing ? "Pause" : "Play"}
             </FluidButton>
-            <FluidButton onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null}>
+            <FluidButton onClick={stop} variant="outline" size="sm" disabled={!playing && activeIndex === null && !loading}>
               <StopIcon />
               Stop
             </FluidButton>
@@ -84,7 +85,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
         </div>
         {error ? <div className="mt-3 text-xs text-destructive">{error}</div> : null}
         <div className="mt-4 flex max-h-32 flex-wrap gap-1.5 overflow-auto rounded-xl bg-background/45 p-3 font-mono text-xs ring-1 ring-border/50 [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]">
-          {tokens.slice(0, 180).map((token, index) => (
+          {previewTokens.map((token, index) => (
             <span
               key={`${token.label}-${index}`}
               className={cn(
@@ -95,6 +96,9 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
               {token.label}
             </span>
           ))}
+          {tokens.length > previewTokens.length ? (
+            <span className="rounded-md bg-muted px-2 py-1 text-muted-foreground">+{tokens.length - previewTokens.length}</span>
+          ) : null}
         </div>
       </div>
     </FluidPanel>
