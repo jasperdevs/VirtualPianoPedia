@@ -15,6 +15,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const audioRef = useRef<AudioContext | null>(null);
   const stopRef = useRef(false);
 
@@ -27,24 +28,29 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
 
   async function play() {
     if (!tokens.length) return;
-    stopRef.current = false;
-    setPlaying(true);
-    audioRef.current ??= new AudioContext();
-    await audioRef.current.resume();
-    setLoading(true);
-    await preloadPianoSamples(audioRef.current);
-    setLoading(false);
+    try {
+      setError("");
+      stopRef.current = false;
+      setPlaying(true);
+      audioRef.current ??= new AudioContext();
+      await audioRef.current.resume();
+      setLoading(true);
+      await preloadPianoSamples(audioRef.current, tokens);
+      setLoading(false);
 
-    for (let index = 0; index < tokens.length; index += 1) {
-      if (stopRef.current) break;
-      setActiveIndex(index);
-      await playToken(audioRef.current, tokens[index]);
-      await wait(tokens[index].duration * 1000 + 70);
+      for (let index = 0; index < tokens.length; index += 1) {
+        if (stopRef.current) break;
+        setActiveIndex(index);
+        await playToken(audioRef.current, tokens[index]);
+        await wait(tokens[index].duration * 1000 + 70);
+      }
+    } catch {
+      setError("Playback failed. Try pressing Play again.");
+    } finally {
+      setPlaying(false);
+      setLoading(false);
+      setActiveIndex(null);
     }
-
-    setPlaying(false);
-    setLoading(false);
-    setActiveIndex(null);
   }
 
   function stop() {
@@ -75,6 +81,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
           </FluidButton>
         </div>
       </div>
+      {error ? <div className="mt-3 text-xs text-destructive">{error}</div> : null}
       <div className="mt-4 flex max-h-32 flex-wrap gap-1.5 overflow-auto font-mono text-xs">
         {tokens.slice(0, 180).map((token, index) => (
           <span

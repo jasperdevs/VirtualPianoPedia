@@ -90,45 +90,67 @@ export function parsePlayableTokens(sheet: string): PlayableToken[] {
     .filter((token) => token.keys.length);
 }
 
-export async function preloadPianoSamples(audioContext: AudioContext) {
-  await Promise.all(["C4", "D#4", "F#4", "A4", "C5"].map((note) => loadSample(audioContext, note).catch(() => null)));
+export async function preloadPianoSamples(audioContext: AudioContext, tokens: PlayableToken[] = []) {
+  const notes = new Set(["C4", "D#4", "F#4", "A4", "C5"]);
+
+  for (const token of tokens) {
+    for (const key of token.keys) {
+      const semitone = keySemitone.get(key.toLowerCase()) ?? 0;
+      notes.add(nearestSample(60 + semitone).name);
+    }
+  }
+
+  await Promise.all([...notes].map((note) => loadSample(audioContext, note).catch(() => null)));
 }
 
 export async function playToken(audioContext: AudioContext, token: PlayableToken, startTime = audioContext.currentTime) {
+  const scheduledTime = Math.max(audioContext.currentTime + 0.01, startTime);
   const output = audioContext.createGain();
-  output.gain.setValueAtTime(0.0001, startTime);
-  output.gain.exponentialRampToValueAtTime(0.34, startTime + 0.014);
-  output.gain.exponentialRampToValueAtTime(0.0001, startTime + token.duration + 0.22);
+  output.gain.setValueAtTime(0.85, scheduledTime);
   output.connect(audioContext.destination);
 
   await Promise.all(
     token.keys.map(async (key) => {
       const semitone = keySemitone.get(key.toLowerCase()) ?? 0;
       const midi = 60 + semitone;
-      await playSample(audioContext, output, midi, startTime, token.duration);
+      await playSample(audioContext, output, midi, scheduledTime, token.duration);
     }),
   );
 }
 
 async function playSample(audioContext: AudioContext, output: GainNode, midi: number, startTime: number, duration: number) {
   const nearest = nearestSample(midi);
+  const scheduledTime = Math.max(audioContext.currentTime + 0.01, startTime);
 
   try {
     const buffer = await loadSample(audioContext, nearest.name);
+    const actualStart = Math.max(audioContext.currentTime + 0.01, scheduledTime);
+    const voice = makeVoiceGain(audioContext, output, actualStart, duration, 0.34, 0.26);
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
-    source.playbackRate.setValueAtTime(2 ** ((midi - nearest.midi) / 12), startTime);
-    source.connect(output);
-    source.start(startTime);
-    source.stop(startTime + duration + 0.45);
+    source.playbackRate.setValueAtTime(2 ** ((midi - nearest.midi) / 12), actualStart);
+    source.connect(voice);
+    source.start(actualStart);
+    source.stop(actualStart + duration + 0.45);
   } catch {
+    const actualStart = Math.max(audioContext.currentTime + 0.01, scheduledTime);
+    const voice = makeVoiceGain(audioContext, output, actualStart, duration, 0.18, 0.05);
     const oscillator = audioContext.createOscillator();
     oscillator.type = "triangle";
-    oscillator.frequency.setValueAtTime(261.63 * 2 ** ((midi - 60) / 12), startTime);
-    oscillator.connect(output);
-    oscillator.start(startTime);
-    oscillator.stop(startTime + duration + 0.05);
+    oscillator.frequency.setValueAtTime(261.63 * 2 ** ((midi - 60) / 12), actualStart);
+    oscillator.connect(voice);
+    oscillator.start(actualStart);
+    oscillator.stop(actualStart + duration + 0.05);
   }
+}
+
+function makeVoiceGain(audioContext: AudioContext, output: GainNode, startTime: number, duration: number, peak: number, release: number) {
+  const voice = audioContext.createGain();
+  voice.gain.setValueAtTime(0.0001, startTime);
+  voice.gain.exponentialRampToValueAtTime(peak, startTime + 0.014);
+  voice.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + release);
+  voice.connect(output);
+  return voice;
 }
 
 function loadSample(audioContext: AudioContext, noteName: string) {
