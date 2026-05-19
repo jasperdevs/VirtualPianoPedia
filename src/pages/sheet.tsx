@@ -23,8 +23,15 @@ export function SheetPage() {
   const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}/${activeVariant.fileName}`;
 
   return (
-    <section className="min-h-[100dvh] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1360px]">
+    <section className="relative min-h-[calc(100dvh-4rem)] overflow-hidden px-4 py-8 sm:px-6 lg:px-10">
+      <img
+        src="/VirtualPianoPedia/assets/piano-macro-bg.png"
+        alt=""
+        className="absolute right-0 top-0 h-[560px] w-full object-cover object-right-top opacity-95 brightness-[2.05] contrast-125 dark:brightness-[1.65]"
+      />
+      <div className="absolute inset-x-0 top-0 h-[640px] bg-[linear-gradient(180deg,hsl(var(--background)/0.05)_0%,hsl(var(--background)/0.42)_54%,hsl(var(--background))_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background))_0%,hsl(var(--background)/0.82)_42%,hsl(var(--background)/0.28)_75%,hsl(var(--background)/0.66)_100%)]" />
+      <div className="relative mx-auto max-w-[1500px]">
         <FluidButton asChild variant="ghost" className="-ml-3 mb-7">
           <Link to="/">
             <ArrowLeftIcon />
@@ -32,7 +39,7 @@ export function SheetPage() {
           </Link>
         </FluidButton>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_330px]">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap gap-2">
               <FluidBadge color="white">{sheet.category}</FluidBadge>
@@ -65,7 +72,7 @@ export function SheetPage() {
 
             <SheetPlayer sheet={activeVariant.body} className="mt-6" />
 
-            <FluidPanel className="mt-6 overflow-hidden">
+            <FluidPanel className="mt-6 overflow-hidden bg-card/82 backdrop-blur-md">
               <div className="flex items-center justify-between gap-3 px-4 py-3">
                 <FluidBadge>{activeVariant.tier}</FluidBadge>
                 <FluidCopy value={activeVariant.body} />

@@ -61,17 +61,25 @@ export function ConverterPage() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mx-auto max-w-3xl text-center">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet</h1>
-        <p className="mt-4 text-muted-foreground">
-          Drop a MIDI file or paste notes, then copy the sheet files into GitHub
-        </p>
-      </div>
+    <section className="relative min-h-[calc(100dvh-4rem)] overflow-hidden px-4 py-8 sm:px-6 lg:px-10">
+      <img
+        src="/VirtualPianoPedia/assets/piano-macro-bg.png"
+        alt=""
+        className="absolute right-0 top-0 h-[420px] w-full object-cover object-right-top opacity-95 brightness-[2.05] contrast-125 dark:brightness-[1.65]"
+      />
+      <div className="absolute inset-x-0 top-0 h-[520px] bg-[linear-gradient(180deg,hsl(var(--background)/0.05)_0%,hsl(var(--background)/0.5)_54%,hsl(var(--background))_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background))_0%,hsl(var(--background)/0.86)_40%,hsl(var(--background)/0.28)_74%,hsl(var(--background)/0.72)_100%)]" />
+      <div className="relative mx-auto w-full max-w-[1500px] min-w-0">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet</h1>
+          <p className="mt-4 max-w-xl text-muted-foreground">
+            Drop MIDI, preview, edit, publish to GitHub
+          </p>
+        </div>
 
-      <div className="mt-8 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="space-y-5">
-          <FluidPanel className="p-4 sm:p-5">
+      <div className="mt-8 grid min-w-0 gap-5 lg:grid-cols-[0.76fr_1.24fr]">
+        <div className="min-w-0 space-y-5">
+          <FluidPanel className="overflow-hidden p-4 sm:p-5 bg-card/82 backdrop-blur-md">
             <motion.label
               className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-6 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
               whileHover={{ y: -2 }}
@@ -106,7 +114,7 @@ export function ConverterPage() {
             </div>
           </FluidPanel>
 
-          <FluidPanel className="p-4 sm:p-5">
+          <FluidPanel className="overflow-hidden p-4 sm:p-5 bg-card/82 backdrop-blur-md">
             <Field label="Paste notes">
               <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-36 font-mono" />
             </Field>
@@ -118,7 +126,7 @@ export function ConverterPage() {
           </FluidPanel>
         </div>
 
-        <FluidPanel className="p-4 sm:p-5">
+        <FluidPanel className="min-w-0 p-4 sm:p-5 bg-card/82 backdrop-blur-md">
           {result ? (
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -169,6 +177,7 @@ export function ConverterPage() {
             </div>
           )}
         </FluidPanel>
+      </div>
       </div>
     </section>
   );

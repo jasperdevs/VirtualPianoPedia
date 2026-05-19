@@ -5,7 +5,7 @@ type Theme = "light" | "dark";
 function readInitialTheme(): Theme {
   const stored = localStorage.getItem("rvps-theme");
   if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark";
 }
 
 export function useTheme() {

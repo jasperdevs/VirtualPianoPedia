@@ -64,7 +64,7 @@ export function FluidButton({
   }
 
   const classes = cn(
-    "group relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap font-medium outline-none transition-[background-color,color,border-color,font-weight,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-ring/45 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+    "group relative inline-flex max-w-full select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap font-medium outline-none transition-[background-color,color,border-color,font-weight,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-ring/45 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
     variantClass[variant],
     sizeClass[size],
     className,

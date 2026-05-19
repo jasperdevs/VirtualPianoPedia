@@ -18,7 +18,7 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-40 bg-background/96 before:pointer-events-none before:absolute before:inset-x-0 before:top-full before:h-10 before:bg-gradient-to-b before:from-background/95 before:to-transparent">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
           <Link to="/" className="flex items-center gap-3">
@@ -30,16 +30,20 @@ export default function App() {
           </Link>
 
           <nav className="hidden items-center rounded-full bg-muted/80 p-1 md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn("relative rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,font-weight] hover:text-foreground", location.pathname === item.href && "text-foreground")}
-              >
-                {location.pathname === item.href ? <motion.span layoutId="app-nav-active" className="absolute inset-0 rounded-full bg-background shadow-sm" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
-                <span className="relative">{item.label}</span>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = item.href === "/" ? location.pathname === "/" || location.pathname.startsWith("/sheet") : location.pathname.startsWith(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={cn("relative rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,font-weight] hover:text-foreground", isActive && "text-foreground")}
+                >
+                  {isActive ? <motion.span layoutId="app-nav-active" className="absolute inset-0 rounded-full bg-background shadow-sm" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
+                  <span className="relative">{item.label}</span>
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2">
