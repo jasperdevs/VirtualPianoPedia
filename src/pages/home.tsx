@@ -81,7 +81,7 @@ export function HomePage() {
         </aside>
 
         <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-5 sm:p-8 lg:p-12">
-          <div className="mx-auto w-full max-w-[1500px] min-w-0">
+          <div className="mx-auto w-full max-w-[1180px] min-w-0">
             <div className="max-w-4xl pt-8 sm:pt-14">
               <div className="mb-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Roblox piano archive</div>
               <h1 className="max-w-full break-words text-4xl font-semibold leading-[0.94] tracking-tight sm:text-6xl lg:text-7xl">VirtualPianoPedia</h1>
@@ -113,7 +113,7 @@ export function HomePage() {
               ))}
             </div>
 
-            <div className="mt-10 overflow-hidden rounded-[1.35rem] bg-card/78 shadow-[0_22px_90px_-70px_rgba(255,255,255,0.45)] ring-1 ring-border/55 backdrop-blur-md">
+            <div className="mt-10 max-w-[820px] overflow-hidden rounded-[1.35rem] bg-card/78 shadow-[0_22px_90px_-70px_rgba(255,255,255,0.45)] ring-1 ring-border/55 backdrop-blur-md">
               <div className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
@@ -127,13 +127,6 @@ export function HomePage() {
 
               {filteredSheets.length ? (
                 <div>
-                  <div className="hidden grid-cols-[minmax(260px,1.6fr)_minmax(160px,0.8fr)_150px_230px_92px] px-5 pb-2 pt-1 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground lg:grid">
-                    <span>Song</span>
-                    <span>Artist / composer</span>
-                    <span>Category</span>
-                    <span>Difficulty</span>
-                    <span className="text-right">Length</span>
-                  </div>
                   <div className="divide-y divide-border/45">
                     {filteredSheets.map((sheet) => (
                       <SheetRow key={sheet.slug} sheet={sheet} isFavorite={isFavorite(sheet.slug)} onFavorite={() => toggleFavorite(sheet.slug)} />
@@ -180,7 +173,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
   return (
     <motion.div
-      className="group grid grid-cols-[32px_52px_1fr] items-center gap-4 px-3 py-3 transition-colors hover:bg-muted/55 sm:grid-cols-[32px_64px_1fr_auto] lg:grid-cols-[32px_minmax(260px,1.6fr)_minmax(160px,0.8fr)_150px_230px_92px]"
+      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-3 py-3 transition-colors hover:bg-muted/55 sm:grid-cols-[32px_64px_minmax(0,1fr)]"
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.995 }}
       transition={{ type: "spring", stiffness: 520, damping: 38 }}
@@ -189,68 +182,35 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
       </motion.button>
       <Link to={`/sheet/${sheet.slug}`} className="contents text-foreground">
-        <div className="contents lg:hidden">
-          <div className="grid aspect-square place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
-            {sheet.title
-              .split(" ")
-              .slice(0, 2)
-              .map((word) => word[0])
-              .join("")}
+        <div className="grid aspect-square place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
+          {sheet.title
+            .split(" ")
+            .slice(0, 2)
+            .map((word) => word[0])
+            .join("")}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{sheet.title}</h3>
+            {sheet.tags.includes("fast") || sheet.tags.includes("popular") ? <FireIcon className="size-4 text-muted-foreground" weight="fill" /> : null}
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{sheet.title}</h3>
-              {sheet.tags.includes("fast") || sheet.tags.includes("popular") ? <FireIcon className="size-4 text-muted-foreground" weight="fill" /> : null}
-            </div>
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-              <span>{sheet.artist}</span>
-              <span className="hidden sm:inline">{sheet.category}</span>
-              <span className="inline-flex items-center gap-1">
-                <ClockIcon className="size-3.5" />
-                {sheet.length}
-              </span>
-            </div>
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+            <span>{sheet.artist}</span>
+            <span className="hidden sm:inline">{sheet.category}</span>
+            <span className="inline-flex items-center gap-1">
+              <ClockIcon className="size-3.5" />
+              {sheet.length}
+            </span>
           </div>
         </div>
-
-        <div className="hidden min-w-0 items-center gap-4 lg:flex">
-          <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
-            {sheet.title
-              .split(" ")
-              .slice(0, 2)
-              .map((word) => word[0])
-              .join("")}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="truncate text-base font-semibold tracking-tight text-foreground">{sheet.title}</h3>
-              {sheet.tags.includes("fast") || sheet.tags.includes("popular") ? <FireIcon className="size-4 text-muted-foreground" weight="fill" /> : null}
-            </div>
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              {sheet.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <span className="hidden text-sm text-muted-foreground lg:block">{sheet.artist}</span>
-        <span className="hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
-          <MusicNoteIcon className="size-4" />
-          {sheet.category}
-        </span>
-        <div className="col-span-3 flex flex-wrap gap-1.5 sm:col-span-1 sm:justify-end lg:col-span-1 lg:justify-start">
+        <div className="col-span-3 flex flex-wrap gap-1.5 sm:col-span-1 sm:col-start-3 sm:justify-start">
           {sheet.variants.map((variant) => (
             <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
               {variant.tier}
             </span>
           ))}
+          <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" />
         </div>
-        <span className="hidden items-center justify-end gap-3 text-sm text-muted-foreground lg:flex">
-          {sheet.length}
-          <ArrowUpRightIcon className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </span>
       </Link>
     </motion.div>
   );
