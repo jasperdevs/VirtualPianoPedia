@@ -52,7 +52,7 @@ function sheetMarkdownPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [react(), sheetMarkdownPlugin()],
-  base: "/RVPS/",
+  base: "/VirtualPianoPedia/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

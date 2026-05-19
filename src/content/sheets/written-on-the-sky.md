@@ -2,7 +2,7 @@
 title: Written on the Sky
 artist: Max Richter
 game: Roblox Virtual Piano
-difficulty: Intermediate
+difficulty: Standard
 category: Classical
 tempo: 95
 length: "01:51"
@@ -13,6 +13,15 @@ tags:
   - calm
   - piano
 ---
+
+## Starter
+
+[6p] a [0tp] a p a
+5 o [0rd] o d o
+3 p [8wo] p o p
+4 i [8es] i s i
+
+## Standard
 
 [6p] a [0tp] a p a [0ts] d
 5 o [0rd] o d o [0rd] o
@@ -27,3 +36,9 @@ tags:
 [7d] o [wud] o d o [wud] o 6 p [qto] p o p [qta] s
 [7a] u [wya] u a u [wya] u 8 i [wyu] i o p [wya] s
 [5d] o [9rd] o d o [9rd] o 6|
+
+## Advanced
+
+[6p] a [0tp] a p a [0ts] d | [5o] [0rd] o d o [0rd] o
+3 p [8wo] p o p [8wa] s | 4 i [8es] i s i [8es] i
+[6u] i [qtu] i o p [qta] s | [5d] o [9rd] o d o [9rd] o

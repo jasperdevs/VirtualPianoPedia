@@ -6,7 +6,7 @@ import "./styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter basename="/RVPS">
+    <BrowserRouter basename="/VirtualPianoPedia">
       <App />
     </BrowserRouter>
   </StrictMode>,

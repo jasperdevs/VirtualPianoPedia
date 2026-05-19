@@ -1,158 +1,167 @@
 import { useState } from "react";
-import type React from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, FileText, Gauge, Search, Timer, WandSparkles } from "lucide-react";
+import { ArrowUpRightIcon, ClockIcon, FireIcon, MagnifyingGlassIcon, MusicNotesIcon, SparkleIcon } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCategories, sheets } from "@/lib/sheets";
+import { categoryNav, filterByCategory, getCategoryCount, searchSheets, sheets, sortSheets, tierClass, type Sheet } from "@/lib/sheets";
 import { cn } from "@/lib/utils";
 
-const difficulties = ["All", "Beginner", "Intermediate", "Advanced"] as const;
+type SortMode = "hot" | "az" | "length";
+
+const quickSearches = ["video game", "classical", "popular", "expert", "pop", "calm"];
 
 export function HomePage() {
   const [query, setQuery] = useState("");
-  const [difficulty, setDifficulty] = useState<(typeof difficulties)[number]>("All");
-  const categories = getCategories();
-
-  const needle = query.toLowerCase().trim();
-  const filteredSheets = sheets.filter((sheet) => {
-    const matchesQuery =
-      !needle || [sheet.title, sheet.artist, sheet.game, sheet.category, ...sheet.tags].some((value) => value.toLowerCase().includes(needle));
-    const matchesDifficulty = difficulty === "All" || sheet.difficulty === difficulty;
-    return matchesQuery && matchesDifficulty;
-  });
+  const [category, setCategory] = useState("All Sheets");
+  const [sort, setSort] = useState<SortMode>("hot");
+  const filteredSheets = sortSheets(searchSheets(filterByCategory(sheets, category), query), sort);
 
   return (
     <>
-      <section className="border-b">
-        <div className="container grid min-h-[520px] items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
-          <div className="max-w-2xl">
-            <Badge variant="outline" className="mb-5">
-              Markdown-powered sheet library
-            </Badge>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-[0.98] tracking-normal sm:text-6xl lg:text-7xl">
-              Roblox virtual piano sheets, kept clean.
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              RVPS is just sheets: searchable pages generated from GitHub markdown, with a converter for making new submissions fast.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link to="/converter">
-                  <WandSparkles />
-                  Convert a sheet
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href="https://github.com/jasperdevs/RVPS/new/main/src/content/sheets?filename=new-sheet.md" target="_blank" rel="noreferrer">
-                  Add on GitHub
-                  <ArrowUpRight />
-                </a>
-              </Button>
-            </div>
+      <section className="mx-auto flex min-h-[54dvh] max-w-5xl flex-col items-center justify-center px-5 py-16 text-center">
+        <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="mb-7 size-16" />
+        <h1 className="max-w-4xl text-5xl font-semibold leading-[0.96] tracking-tight sm:text-6xl lg:text-7xl">
+          Virtual piano sheets, organized like a wiki.
+        </h1>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+          Browse Roblox virtual piano sheets by category, choose the version that fits, or convert a MIDI into a playable sheet.
+        </p>
+        <div className="mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
+          <div className="relative flex-1">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" className="h-11 pl-9" />
           </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 -z-10 rounded-[2rem] bg-muted" />
-            <div className="rounded-[2rem] border bg-card p-4 shadow-border">
-              <div className="flex items-center gap-2 border-b pb-3">
-                <span className="size-3 rounded-full bg-foreground" />
-                <span className="size-3 rounded-full bg-muted-foreground/40" />
-                <span className="size-3 rounded-full bg-muted-foreground/20" />
-              </div>
-              <div className="space-y-3 pt-5 font-mono text-sm leading-7">
-                <div className="text-muted-foreground">written-on-the-sky.md</div>
-                <div className="rounded-lg bg-muted p-4">
-                  <div>---</div>
-                  <div>title: Written on the Sky</div>
-                  <div>artist: Max Richter</div>
-                  <div>difficulty: Intermediate</div>
-                  <div>---</div>
-                </div>
-                <pre className="overflow-hidden rounded-lg bg-background p-4 text-foreground">
-{`[6p] a [0tp] a p a [0ts] d
-5 o [0rd] o d o [0rd] o
-3 p [8wo] p o p [8wa] s`}
-                </pre>
-              </div>
-            </div>
-          </div>
+          <Button asChild size="lg">
+            <Link to="/converter">
+              <SparkleIcon />
+              Convert
+            </Link>
+          </Button>
         </div>
       </section>
 
-      <section className="container py-12">
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm font-medium uppercase text-muted-foreground">Library</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal">Browse sheets</h2>
+      <section className="min-h-[100dvh] bg-muted/40 py-6">
+        <div className="mx-auto grid max-w-7xl gap-5 px-4 md:grid-cols-[220px_1fr]">
+          <aside className="md:sticky md:top-24 md:h-[calc(100dvh-7rem)]">
+            <div className="flex gap-2 overflow-x-auto pb-2 md:block md:space-y-1 md:overflow-visible">
+              {categoryNav.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setCategory(item)}
+                  className={cn(
+                    "inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-background hover:text-foreground active:scale-[0.98] md:w-full",
+                    category === item && "bg-background text-foreground shadow-[0_18px_50px_-38px_rgba(0,0,0,0.65)]",
+                  )}
+                >
+                  <MusicNotesIcon className="size-4" />
+                  {item}
+                  <span className="ml-auto hidden text-xs tabular-nums text-muted-foreground md:inline">{getCategoryCount(item)}</span>
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          <div className="rounded-[1.5rem] bg-background p-4 shadow-[0_32px_90px_-76px_rgba(0,0,0,0.65)] sm:p-6">
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl font-semibold tracking-tight">{category}</h2>
+                  <Badge variant="secondary">{filteredSheets.length} songs</Badge>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">Pick a song, then switch between Starter, Standard, Advanced, and Expert versions.</p>
+              </div>
+              <div className="flex rounded-lg bg-muted p-1">
+                {[
+                  ["hot", "Hot"],
+                  ["az", "A-Z"],
+                  ["length", "Length"],
+                ].map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setSort(value as SortMode)}
+                    className={cn("rounded-md px-3 py-1.5 text-sm text-muted-foreground transition", sort === value && "bg-background text-foreground shadow-sm")}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5 flex flex-wrap gap-2">
+              {quickSearches.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setQuery(tag)}
+                  className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition hover:bg-foreground hover:text-background"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+
+            {filteredSheets.length ? (
+              <div className="space-y-2">
+                {filteredSheets.map((sheet, index) => (
+                  <SheetRow key={sheet.slug} sheet={sheet} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex min-h-[360px] flex-col items-center justify-center rounded-[1.25rem] bg-muted/60 px-6 text-center">
+                <SparkleIcon className="mb-4 size-8 text-muted-foreground" />
+                <h3 className="text-xl font-semibold tracking-tight">No sheets here yet.</h3>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Convert one, copy the markdown, and open a GitHub pull request.</p>
+                <Button asChild className="mt-5">
+                  <Link to="/converter">Open converter</Link>
+                </Button>
+              </div>
+            )}
           </div>
-          <div className="relative w-full lg:w-[360px]">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs, artists, tags..." className="pl-9" />
-          </div>
-        </div>
-
-        <Tabs defaultValue="All" value={difficulty} onValueChange={(value) => setDifficulty(value as typeof difficulty)}>
-          <TabsList className="mb-6 flex h-auto flex-wrap justify-start">
-            {difficulties.map((item) => (
-              <TabsTrigger key={item} value={item}>
-                {item}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-
-        <div className="mb-8 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Badge key={category} variant="secondary">
-              {category}
-            </Badge>
-          ))}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filteredSheets.map((sheet) => (
-            <Link key={sheet.slug} to={`/sheet/${sheet.slug}`} className="group">
-              <Card className="h-full transition-colors hover:bg-muted/50">
-                <CardHeader>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <Badge variant="outline">{sheet.category}</Badge>
-                    <ArrowUpRight className="size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </div>
-                  <CardTitle>{sheet.title}</CardTitle>
-                  <CardDescription>{sheet.artist}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-3 text-sm">
-                    <Metric icon={<Gauge />} label={sheet.difficulty} />
-                    <Metric icon={<Timer />} label={`${sheet.tempo} bpm`} />
-                    <Metric icon={<FileText />} label={sheet.length} />
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {sheet.tags.map((tag) => (
-                      <span key={tag} className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
         </div>
       </section>
     </>
   );
 }
 
-function Metric({ icon, label }: { icon: React.ReactNode; label: string }) {
+function SheetRow({ sheet, index }: { sheet: Sheet; index: number }) {
   return (
-    <div className={cn("flex min-h-16 flex-col justify-between rounded-lg border bg-background p-3 text-muted-foreground")}>
-      <div className="[&_svg]:size-4">{icon}</div>
-      <div className="text-xs font-medium text-foreground">{label}</div>
-    </div>
+    <Link
+      to={`/sheet/${sheet.slug}`}
+      className="group grid grid-cols-[52px_1fr] items-center gap-4 rounded-xl p-2.5 transition hover:bg-muted/70 active:scale-[0.995] sm:grid-cols-[64px_1fr_auto]"
+      style={{ animationDelay: `${index * 35}ms` }}
+    >
+      <div className="grid aspect-square place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">
+        {sheet.title
+          .split(" ")
+          .slice(0, 2)
+          .map((word) => word[0])
+          .join("")}
+      </div>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate text-base font-semibold tracking-tight sm:text-lg">{sheet.title}</h3>
+          {sheet.tags.includes("fast") || sheet.tags.includes("popular") ? <FireIcon className="size-4 text-muted-foreground" weight="fill" /> : null}
+        </div>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span>{sheet.artist}</span>
+          <span className="hidden sm:inline">{sheet.category}</span>
+          <span className="inline-flex items-center gap-1">
+            <ClockIcon className="size-3.5" />
+            {sheet.length}
+          </span>
+        </div>
+      </div>
+      <div className="col-span-2 flex flex-wrap gap-1.5 sm:col-span-1 sm:justify-end">
+        {sheet.variants.map((variant) => (
+          <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
+            {variant.tier}
+          </span>
+        ))}
+        <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" />
+      </div>
+    </Link>
   );
 }

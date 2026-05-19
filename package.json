@@ -1,9 +1,9 @@
 {
-  "name": "rvps",
+  "name": "virtualpianopedia",
   "private": false,
   "version": "0.1.0",
   "type": "module",
-  "description": "Roblox Virtual Piano Sheets: a clean markdown-powered sheet library and converter.",
+  "description": "VirtualPianoPedia: a wiki-style Roblox virtual piano sheet library and converter.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node -e \"fs.copyFileSync('dist/index.html','dist/404.html')\"",
@@ -11,16 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-slot": "^1.2.4",
     "@tonejs/midi": "^2.0.28",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.556.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.10.1",
-    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

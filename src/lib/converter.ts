@@ -19,12 +19,15 @@ export type ConvertOptions = {
   transpose: number;
   sustain: boolean;
   groupChords: boolean;
+  includeTiming: boolean;
 };
 
 export type ConversionResult = {
   title: string;
   sheet: string;
   markdown: string;
+  noteCount: number;
+  duration: string;
 };
 
 function transposeName(name: string, steps: number) {
@@ -61,12 +64,17 @@ function normalizePlainText(input: string, options: ConvertOptions) {
 export async function convertInput(input: string | ArrayBuffer, fileName: string, options: ConvertOptions): Promise<ConversionResult> {
   const isMidi = input instanceof ArrayBuffer || /\.midi?$/i.test(fileName);
   let sheet = "";
+  let noteCount = 0;
+  let duration = "00:00";
 
   if (isMidi && input instanceof ArrayBuffer) {
     const midi = new Midi(input);
     const notes = midi.tracks
       .flatMap((track) => track.notes)
       .sort((a, b) => a.time - b.time);
+    noteCount = notes.length;
+    const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
+    duration = formatDuration(endTime);
 
     const lines: string[] = [];
     let currentLine: string[] = [];
@@ -76,6 +84,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
       const gap = note.time - previousTime;
       const key = noteNameToKey(note.name, options.transpose);
       const token = options.sustain && note.duration > 0.8 ? `${key}-` : key;
+      const timing = options.includeTiming && gap > 0.25 ? `(${gap.toFixed(1)}s)` : "";
 
       if (gap > 0.55 && currentLine.length) {
         lines.push(currentLine.join(" "));
@@ -86,7 +95,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
       if (options.groupChords && previous && gap < 0.04) {
         currentLine[currentLine.length - 1] = `[${previous}${token}]`;
       } else {
-        currentLine.push(token);
+        currentLine.push(`${timing}${token}`);
       }
       previousTime = note.time;
     }
@@ -95,10 +104,18 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     sheet = lines.join("\n");
   } else {
     sheet = normalizePlainText(String(input), options);
+    noteCount = sheet.split(/\s+/).filter(Boolean).length;
   }
 
   const title = fileName.replace(/\.[^.]+$/, "") || "Untitled Sheet";
-  const markdown = `---\ntitle: ${title}\nartist: Unknown\ngame: Roblox Virtual Piano\ndifficulty: Beginner\ncategory: Pop\ntempo: 100\nlength: "00:00"\ntranspose: ${options.transpose}\nsource: Converter submission\ntags:\n  - submission\n---\n\n${sheet}\n`;
+  const markdown = `---\ntitle: ${title}\nartist: Unknown\ngame: Roblox Virtual Piano\ndifficulty: Standard\ncategory: Pop\ntempo: 100\nlength: "${duration}"\ntranspose: ${options.transpose}\nsource: Converter submission\ntags:\n  - submission\n---\n\n## Standard\n\n${sheet}\n`;
 
-  return { title, sheet, markdown };
+  return { title, sheet, markdown, noteCount, duration };
+}
+
+function formatDuration(seconds: number) {
+  const rounded = Math.max(0, Math.round(seconds));
+  const minutes = Math.floor(rounded / 60);
+  const rest = rounded % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
 }

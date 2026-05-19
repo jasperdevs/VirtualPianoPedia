@@ -1,6 +1,6 @@
-# RVPS
+# VirtualPianoPedia
 
-Roblox Virtual Piano Sheets is a clean sheet library for Roblox virtual piano players. It has no player, comments, accounts, or extra social layer. Sheets live in GitHub as markdown and the site builds from those files.
+Wiki-style Roblox virtual piano sheets with a MIDI converter and playable sheet previews.
 
 ## Add a sheet
 
@@ -11,7 +11,7 @@ Create a markdown file in `src/content/sheets`:
 title: Song Title
 artist: Artist
 game: Roblox Virtual Piano
-difficulty: Beginner
+difficulty: Standard
 category: Pop
 tempo: 100
 length: "01:30"
@@ -21,15 +21,24 @@ tags:
   - pop
 ---
 
+## Starter
+
 a s d f g
+
+## Standard
+
 [asd] f g h
 ```
 
-Open a pull request and GitHub Pages will rebuild the site after merge.
+Use `Starter`, `Standard`, `Advanced`, and `Expert` headings when one song has multiple versions.
 
 ## Converter
 
-The `/converter` page accepts MIDI files or pasted note text. MIDI input is parsed in the browser, mapped to virtual piano keys, and exported as the same markdown format used by the library.
+The `/converter` page accepts MIDI files or pasted note text. It maps notes to Roblox virtual piano keys, previews playback, and exports markdown.
+
+External converter reference:
+
+https://playpianosheets.com/roblox-piano-sheets-maker
 
 ## Development
 

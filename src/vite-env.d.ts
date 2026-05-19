@@ -6,7 +6,7 @@ declare module "*.md?sheet" {
       title: string;
       artist: string;
       game: string;
-      difficulty: "Beginner" | "Intermediate" | "Advanced";
+      difficulty: "Starter" | "Standard" | "Advanced" | "Expert";
       category: string;
       tempo: number;
       length: string;
