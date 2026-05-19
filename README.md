@@ -1,10 +1,20 @@
-# VirtualPianoPedia
+<p align="center">
+  <img src="./public/assets/rvps-logo.png" alt="VirtualPianoPedia logo" width="96" />
+</p>
 
-Wiki-style Roblox virtual piano sheets with a MIDI converter, favorites, and playable sheet previews.
+<h1 align="center">VirtualPianoPedia</h1>
+
+<p align="center">Roblox virtual piano sheets with folders for each song, difficulty variants, local favorites, MIDI conversion, and sampled piano preview</p>
+
+<p align="center">
+  <a href="https://jasperdevs.github.io/VirtualPianoPedia/">Live site</a>
+  ·
+  <a href="https://github.com/jasperdevs/VirtualPianoPedia">GitHub</a>
+</p>
 
 ## Add A Sheet
 
-Each song gets its own folder:
+Each song gets one folder:
 
 ```text
 src/content/sheets/song-title/
@@ -15,9 +25,9 @@ src/content/sheets/song-title/
   expert.md
 ```
 
-Only add the version files that actually exist.
+Only add the versions that exist
 
-`_meta.md`:
+`_meta.md`
 
 ```md
 ---
@@ -28,13 +38,13 @@ category: Pop
 tempo: 100
 length: "01:30"
 transpose: 0
-source: Community submission
+source: Local sheet
 tags:
   - pop
 ---
 ```
 
-`normal.md`:
+`normal.md`
 
 ```text
 a s d f g
@@ -43,9 +53,9 @@ a s d f g
 
 ## Converter
 
-The `/converter` page accepts MIDI files or pasted note text. It maps notes to Roblox virtual piano keys, previews playback, and exports the `_meta.md` plus `normal.md` content.
+The site converter accepts MIDI files and pasted notes, then exports `_meta.md` plus a sheet variant file
 
-External converter reference:
+Reference converter:
 
 https://playpianosheets.com/roblox-piano-sheets-maker
 
@@ -57,7 +67,11 @@ npm run dev
 npm run build
 ```
 
-The UI uses shadcn-style local components, Tailwind CSS variables, and Fluid Functionalism-inspired motion for tabs, switches, copy feedback, and tactile buttons.
+## Audio Credits
+
+Playback uses Salamander Grand Piano V3 samples by Alexander Holm through `@audio-samples/piano-mp3-velocity16`
+
+The samples are licensed under CC BY 3.0
 
 ## License
 

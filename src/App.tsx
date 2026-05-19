@@ -17,13 +17,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 bg-background/88 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 bg-background/96 before:pointer-events-none before:absolute before:inset-x-0 before:top-full before:h-10 before:bg-gradient-to-b before:from-background/95 before:to-transparent">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
           <Link to="/" className="flex items-center gap-3">
             <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="size-9 rounded-md" />
             <div>
               <div className="text-base font-semibold leading-none tracking-tight">VirtualPianoPedia</div>
-              <div className="text-xs text-muted-foreground">Roblox piano sheet wiki</div>
+              <div className="text-xs text-muted-foreground">Roblox piano sheets</div>
             </div>
           </Link>
 
@@ -45,7 +45,7 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <Button asChild variant="ghost" size="sm" className="hidden text-muted-foreground hover:text-foreground sm:inline-flex">
               <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer">
                 <GithubLogoIcon />
                 GitHub
@@ -68,7 +68,7 @@ export default function App() {
 
       <footer className="bg-muted/35">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <div>Sheets, variants, converter, and playback. No comments or account system.</div>
+          <div>Sheets, variants, converter, playback, no accounts</div>
           <div className="flex items-center gap-4">
             <Link to="/converter" className="inline-flex items-center gap-1 text-foreground hover:underline">
               <SparkleIcon className="size-4" />

@@ -3,7 +3,12 @@
   "private": false,
   "version": "0.1.0",
   "type": "module",
-  "description": "VirtualPianoPedia: a wiki-style Roblox virtual piano sheet library and converter.",
+  "description": "Roblox virtual piano sheets with variants, favorites, conversion, and sampled piano preview",
+  "homepage": "https://jasperdevs.github.io/VirtualPianoPedia/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasperdevs/VirtualPianoPedia.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node -e \"fs.copyFileSync('dist/index.html','dist/404.html')\"",

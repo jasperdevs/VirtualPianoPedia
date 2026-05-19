@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PauseIcon, PlayIcon, SpeakerHighIcon, StopIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { parsePlayableTokens, playToken } from "@/lib/playback";
+import { parsePlayableTokens, playToken, preloadPianoSamples } from "@/lib/playback";
 import { cn } from "@/lib/utils";
 
 type SheetPlayerProps = {
@@ -13,6 +13,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
   const tokens = useMemo(() => parsePlayableTokens(sheet), [sheet]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
   const audioRef = useRef<AudioContext | null>(null);
   const stopRef = useRef(false);
 
@@ -29,21 +30,26 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
     setPlaying(true);
     audioRef.current ??= new AudioContext();
     await audioRef.current.resume();
+    setLoading(true);
+    await preloadPianoSamples(audioRef.current);
+    setLoading(false);
 
     for (let index = 0; index < tokens.length; index += 1) {
       if (stopRef.current) break;
       setActiveIndex(index);
-      playToken(audioRef.current, tokens[index]);
+      await playToken(audioRef.current, tokens[index]);
       await wait(tokens[index].duration * 1000 + 70);
     }
 
     setPlaying(false);
+    setLoading(false);
     setActiveIndex(null);
   }
 
   function stop() {
     stopRef.current = true;
     setPlaying(false);
+    setLoading(false);
     setActiveIndex(null);
   }
 
@@ -55,7 +61,7 @@ export function SheetPlayer({ sheet, className }: SheetPlayerProps) {
             <SpeakerHighIcon className="size-4" />
             Preview
           </div>
-          <div className="mt-1 text-xs text-muted-foreground">{tokens.length} playable notes detected</div>
+          <div className="mt-1 text-xs text-muted-foreground">{loading ? "Loading piano samples" : `${tokens.length} playable notes detected`}</div>
         </div>
         <div className="flex gap-2">
           <Button onClick={playing ? stop : play} size="sm">

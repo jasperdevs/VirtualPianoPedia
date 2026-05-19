@@ -45,9 +45,9 @@ export function ConverterPage() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8">
       <div className="mx-auto max-w-3xl text-center">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet.</h1>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Convert MIDI into a playable sheet</h1>
         <p className="mt-4 text-muted-foreground">
-          Drop a MIDI file or paste notes. VirtualPianoPedia maps notes, applies transpose, groups chords, previews playback, and outputs PR-ready markdown.
+          Drop a MIDI file or paste notes, then copy the sheet files into GitHub
         </p>
       </div>
 
@@ -134,7 +134,7 @@ export function ConverterPage() {
             <div className="flex min-h-[680px] flex-col items-center justify-center rounded-[1.25rem] bg-background px-6 text-center">
               <PlayIcon className="mb-5 size-12 text-muted-foreground" />
               <h2 className="text-2xl font-semibold tracking-tight">Awaiting input</h2>
-              <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview, copy, and submit a sheet.</p>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and copy a sheet</p>
             </div>
           )}
         </section>
