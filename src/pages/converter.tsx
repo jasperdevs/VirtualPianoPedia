@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRightIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon, PlayIcon } from "@phosphor-icons/react";
@@ -19,13 +19,30 @@ export function ConverterPage() {
   const [includeTiming, setIncludeTiming] = useState(false);
   const [fileName, setFileName] = useState("converted-sheet.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
+  const [folderSlug, setFolderSlug] = useState("");
+  const [variantFile, setVariantFile] = useState("normal.md");
+  const [metaMarkdown, setMetaMarkdown] = useState("");
+  const [variantMarkdown, setVariantMarkdown] = useState("");
   const [error, setError] = useState("");
+
+  const editedMarkdown = useMemo(() => {
+    if (!result) return "";
+    const safeFolder = folderSlug.trim() || result.folderSlug;
+    const safeVariantFile = variantFile.trim() || "normal.md";
+    return `# src/content/sheets/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeFolder}/${safeVariantFile}\n\n${variantMarkdown.trimEnd()}\n`;
+  }, [folderSlug, metaMarkdown, result, variantFile, variantMarkdown]);
+
+  const editedNoteCount = useMemo(() => variantMarkdown.split(/\s+/).filter(Boolean).length, [variantMarkdown]);
 
   async function handleConvert(input: string | ArrayBuffer, name = "converted-sheet.md") {
     setError("");
     try {
       const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming });
       setResult(converted);
+      setFolderSlug(converted.folderSlug);
+      setVariantFile("normal.md");
+      setMetaMarkdown(converted.metaMarkdown);
+      setVariantMarkdown(converted.variantMarkdown);
       setFileName(`${converted.folderSlug}-files.txt`);
     } catch (conversionError) {
       setError(conversionError instanceof Error ? conversionError.message : "Could not convert that file.");
@@ -34,7 +51,7 @@ export function ConverterPage() {
 
   function downloadMarkdown() {
     if (!result) return;
-    const blob = new Blob([result.markdown], { type: "text/markdown" });
+    const blob = new Blob([editedMarkdown], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -108,28 +125,36 @@ export function ConverterPage() {
                 <div>
                   <h2 className="text-xl font-semibold tracking-tight">{result.title}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {result.noteCount} notes · {result.duration}
+                    {editedNoteCount} notes · {result.duration}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <FluidCopy value={result.markdown} />
+                  <FluidCopy value={editedMarkdown} />
                   <FluidButton variant="outline" size="sm" onClick={downloadMarkdown}>
                     <DownloadSimpleIcon />
                     Download
                   </FluidButton>
                 </div>
               </div>
-              <SheetPlayer sheet={result.sheet} />
+              <SheetPlayer sheet={variantMarkdown} />
               <div className="grid gap-3">
-                <Field label={`_meta.md for ${result.folderSlug}`}>
-                  <FluidTextarea value={result.metaMarkdown} readOnly className="min-h-40 font-mono" />
+                <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
+                  <Field label="Folder">
+                    <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(event.target.value)} />
+                  </Field>
+                  <Field label="Sheet file">
+                    <FluidInput value={variantFile} onChange={(event) => setVariantFile(event.target.value)} />
+                  </Field>
+                </div>
+                <Field label="_meta.md">
+                  <FluidTextarea value={metaMarkdown} onChange={(event) => setMetaMarkdown(event.target.value)} className="min-h-40 font-mono" />
                 </Field>
-                <Field label="normal.md">
-                  <FluidTextarea value={result.variantMarkdown} readOnly className="min-h-52 font-mono" />
+                <Field label={variantFile || "normal.md"}>
+                  <FluidTextarea value={variantMarkdown} onChange={(event) => setVariantMarkdown(event.target.value)} className="min-h-52 font-mono" />
                 </Field>
               </div>
               <FluidButton asChild className="w-full">
-                <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${result.folderSlug}?filename=_meta.md`} target="_blank" rel="noreferrer">
+                <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
                   <GithubLogoIcon />
                   Create folder on GitHub
                   <ArrowUpRightIcon />
