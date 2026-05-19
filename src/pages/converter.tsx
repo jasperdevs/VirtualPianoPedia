@@ -66,38 +66,48 @@ export function ConverterPage() {
         <div className="border-b border-border/70 pb-5">
           <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Tool</div>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Converter</h1>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Drop MIDI or paste notes, preview the result, then edit the GitHub files.</p>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI, paste notes, preview the sheet, then edit the GitHub files</p>
         </div>
 
-      <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
-        <div className="min-w-0 space-y-5">
-          <FluidPanel className="overflow-hidden border border-border/70 bg-card p-4 sm:p-5">
-            <motion.label
-              className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-5 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.99 }}
-              transition={{ type: "spring", stiffness: 520, damping: 36 }}
-            >
-              <FileArrowUpIcon className="mb-3 size-9 text-muted-foreground" />
-              <span className="font-semibold">Upload MIDI or text</span>
-              <span className="mt-1 text-sm text-muted-foreground">.mid, .midi, .txt, or .md</span>
-              <input
-                className="sr-only"
-                type="file"
-                accept=".mid,.midi,text/plain,.txt,.md"
-                onChange={async (event) => {
-                  const file = event.target.files?.[0];
-                  if (!file) return;
-                  const value = /\.midi?$/i.test(file.name) ? await file.arrayBuffer() : await file.text();
-                  await handleConvert(value, file.name);
-                }}
-              />
-            </motion.label>
+        <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
+          <FluidPanel className="min-w-0 overflow-hidden border border-border/70 bg-card p-4 sm:p-5 lg:self-start">
+            <div className="grid gap-4">
+              <motion.label
+                className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl bg-background/60 p-5 text-center ring-1 ring-border/50 transition-colors hover:bg-background"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: "spring", stiffness: 520, damping: 36 }}
+              >
+                <FileArrowUpIcon className="mb-3 size-8 text-muted-foreground" />
+                <span className="font-semibold">Upload MIDI or text</span>
+                <span className="mt-1 text-sm text-muted-foreground">.mid, .midi, .txt, or .md</span>
+                <input
+                  className="sr-only"
+                  type="file"
+                  accept=".mid,.midi,text/plain,.txt,.md"
+                  onChange={async (event) => {
+                    const file = event.target.files?.[0];
+                    if (!file) return;
+                    const value = /\.midi?$/i.test(file.name) ? await file.arrayBuffer() : await file.text();
+                    await handleConvert(value, file.name);
+                  }}
+                />
+              </motion.label>
 
-            <div className="mt-4 grid gap-3">
+              <Field label="Paste notes">
+                <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-24 font-mono" />
+              </Field>
+
               <Field label="Transpose">
                 <FluidInput type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
               </Field>
+
+              <FluidButton className="w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
+                <MagicWandIcon />
+                Generate sheet
+              </FluidButton>
+              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
               <div className="grid gap-2 rounded-2xl bg-background/35 p-2">
                 <FluidSwitch enabled={sustain} onChange={setSustain} label="Sustain" hint="Keep held notes longer" />
                 <FluidSwitch enabled={groupChords} onChange={setGroupChords} label="Chords" hint="Merge notes that start together" />
@@ -106,70 +116,58 @@ export function ConverterPage() {
             </div>
           </FluidPanel>
 
-          <FluidPanel className="overflow-hidden border border-border/70 bg-card p-4 sm:p-5">
-            <Field label="Paste notes">
-              <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-28 font-mono" />
-            </Field>
-            <FluidButton className="mt-4 w-full" onClick={() => handleConvert(text, "pasted-sheet.md")}>
-              <MagicWandIcon />
-              Generate sheet
-            </FluidButton>
-            {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
+          <FluidPanel className="min-w-0 border border-border/70 bg-card p-4 sm:p-5">
+            {result ? (
+              <div className="space-y-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold tracking-tight">{result.title}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {editedNoteCount} notes · {result.duration}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <FluidCopy value={editedMarkdown} />
+                    <FluidButton variant="outline" size="sm" onClick={downloadMarkdown}>
+                      <DownloadSimpleIcon />
+                      Download
+                    </FluidButton>
+                  </div>
+                </div>
+                <SheetPlayer sheet={variantMarkdown} />
+                <div className="grid gap-3">
+                  <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
+                    <Field label="Folder">
+                      <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(event.target.value)} />
+                    </Field>
+                    <Field label="Sheet file">
+                      <FluidInput value={variantFile} onChange={(event) => setVariantFile(event.target.value)} />
+                    </Field>
+                  </div>
+                  <Field label="_meta.md">
+                    <FluidTextarea value={metaMarkdown} onChange={(event) => setMetaMarkdown(event.target.value)} className="min-h-40 font-mono" />
+                  </Field>
+                  <Field label={variantFile || "normal.md"}>
+                    <FluidTextarea value={variantMarkdown} onChange={(event) => setVariantMarkdown(event.target.value)} className="min-h-52 font-mono" />
+                  </Field>
+                </div>
+                <FluidButton asChild className="w-full">
+                  <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
+                    <GithubLogoIcon />
+                    Create folder on GitHub
+                    <ArrowUpRightIcon />
+                  </a>
+                </FluidButton>
+              </div>
+            ) : (
+              <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
+                <PlayIcon className="mb-5 size-12 text-muted-foreground" />
+                <h2 className="text-2xl font-semibold tracking-tight">No sheet yet</h2>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and edit the output</p>
+              </div>
+            )}
           </FluidPanel>
         </div>
-
-        <FluidPanel className="min-w-0 border border-border/70 bg-card p-4 sm:p-5">
-          {result ? (
-            <div className="space-y-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold tracking-tight">{result.title}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {editedNoteCount} notes · {result.duration}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <FluidCopy value={editedMarkdown} />
-                  <FluidButton variant="outline" size="sm" onClick={downloadMarkdown}>
-                    <DownloadSimpleIcon />
-                    Download
-                  </FluidButton>
-                </div>
-              </div>
-              <SheetPlayer sheet={variantMarkdown} />
-              <div className="grid gap-3">
-                <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
-                  <Field label="Folder">
-                    <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(event.target.value)} />
-                  </Field>
-                  <Field label="Sheet file">
-                    <FluidInput value={variantFile} onChange={(event) => setVariantFile(event.target.value)} />
-                  </Field>
-                </div>
-                <Field label="_meta.md">
-                  <FluidTextarea value={metaMarkdown} onChange={(event) => setMetaMarkdown(event.target.value)} className="min-h-40 font-mono" />
-                </Field>
-                <Field label={variantFile || "normal.md"}>
-                  <FluidTextarea value={variantMarkdown} onChange={(event) => setVariantMarkdown(event.target.value)} className="min-h-52 font-mono" />
-                </Field>
-              </div>
-              <FluidButton asChild className="w-full">
-                <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
-                  <GithubLogoIcon />
-                  Create folder on GitHub
-                  <ArrowUpRightIcon />
-                </a>
-              </FluidButton>
-            </div>
-          ) : (
-            <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
-              <PlayIcon className="mb-5 size-12 text-muted-foreground" />
-              <h2 className="text-2xl font-semibold tracking-tight">No sheet yet</h2>
-              <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and edit the output.</p>
-            </div>
-          )}
-        </FluidPanel>
-      </div>
       </div>
     </section>
   );
