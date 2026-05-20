@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Closing Time song cover</title>
+  <desc id="desc">A closing doorway with a clock and piano keys</desc>
+  <rect width="1200" height="900" fill="#080808"/>
+  <rect x="410" y="150" width="380" height="520" rx="28" fill="#171717" stroke="#2a2a2a" stroke-width="8"/>
+  <rect x="472" y="214" width="256" height="318" rx="14" fill="#050505"/>
+  <circle cx="600" cy="338" r="86" fill="#f7f7f7"/>
+  <path d="M600 286 V342 L642 372" fill="none" stroke="#070707" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="340" y="650" width="520" height="92" rx="14" fill="#f7f7f7"/>
+  <g fill="#070707">
+    <rect x="410" y="650" width="34" height="58"/>
+    <rect x="482" y="650" width="34" height="58"/>
+    <rect x="625" y="650" width="34" height="58"/>
+    <rect x="696" y="650" width="34" height="58"/>
+  </g>
+  <text x="115" y="210" fill="#f8f8f8" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="750">Closing Time</text>
+  <text x="119" y="270" fill="#bdbdbd" font-family="Inter, Arial, sans-serif" font-size="34">Semisonic</text>
+</svg>

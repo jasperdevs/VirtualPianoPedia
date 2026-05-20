@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Written on the Sky song cover</title>
+  <desc id="desc">A quiet sky with sheet-like lines and a small piano horizon</desc>
+  <rect width="1200" height="900" fill="#080808"/>
+  <path d="M0 0 H1200 V510 C1010 455 865 520 680 470 C460 410 300 500 0 430 Z" fill="#181818"/>
+  <g stroke="#f7f7f7" stroke-width="4" opacity=".24" fill="none">
+    <path d="M168 285 C300 225 405 365 540 295 C665 230 760 325 910 260"/>
+    <path d="M190 345 C330 285 430 425 565 355 C700 285 810 390 945 322"/>
+    <path d="M215 405 C360 345 450 485 592 415 C730 345 835 450 990 382"/>
+  </g>
+  <rect x="650" y="620" width="360" height="80" rx="12" fill="#f6f6f6"/>
+  <g fill="#070707">
+    <rect x="710" y="620" width="30" height="52"/>
+    <rect x="772" y="620" width="30" height="52"/>
+    <rect x="892" y="620" width="30" height="52"/>
+  </g>
+  <text x="130" y="210" fill="#f8f8f8" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="750">Written on the Sky</text>
+  <text x="134" y="270" fill="#bdbdbd" font-family="Inter, Arial, sans-serif" font-size="34">Max Richter</text>
+</svg>
