@@ -106,6 +106,7 @@ https://playpianosheets.com/roblox-piano-sheets-maker
 npm install
 npm run dev
 npm run build
+npm run library:audit
 ```
 
 ## License
