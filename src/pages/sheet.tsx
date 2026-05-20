@@ -27,33 +27,33 @@ export function SheetPage() {
   const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}/${activeVariant.fileName}`;
 
   return (
-    <section className="min-h-[calc(100dvh-4rem)] bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1120px]">
-        <FluidButton asChild variant="ghost" className="-ml-3 mb-7">
+    <section className="h-full overflow-hidden bg-background px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full max-w-[1200px] min-h-0 flex-col">
+        <FluidButton asChild variant="ghost" className="-ml-3 mb-3 shrink-0">
           <Link to="/">
             <ArrowLeftIcon />
             Browse
           </Link>
         </FluidButton>
 
-        <div className="space-y-6">
-          <div className="min-w-0">
-            <div className="mb-4 flex flex-wrap gap-2">
-              <TagLink to={`/?category=${encodeURIComponent(sheet.category)}`} label={sheet.category} primary />
-              <TagLink to={`/?tag=${encodeURIComponent(sheet.game)}`} label={sheet.game} />
-              {sheet.tags.map((tag) => (
-                <TagLink key={tag} to={`/?tag=${encodeURIComponent(tag)}`} label={tag} />
-              ))}
-            </div>
+        <div className="flex min-h-0 flex-1 flex-col gap-4">
+          <div className="grid shrink-0 gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end">
+            <div className="min-w-0">
+              <div className="mb-3 flex flex-wrap gap-2">
+                <TagLink to={`/?category=${encodeURIComponent(sheet.category)}`} label={sheet.category} primary />
+                <TagLink to={`/?tag=${encodeURIComponent(sheet.game)}`} label={sheet.game} />
+                {sheet.tags.map((tag) => (
+                  <TagLink key={tag} to={`/?tag=${encodeURIComponent(tag)}`} label={tag} />
+                ))}
+              </div>
 
-            <h1 className="max-w-4xl text-4xl font-semibold leading-[0.98] sm:text-5xl">{sheet.title}</h1>
-            <div className="mt-3">
-              <Link to={`/artist/${sheet.artistSlug}`} className="inline-flex text-lg text-muted-foreground hover:text-foreground hover:underline">
+              <h1 className="max-w-4xl text-balance text-3xl font-semibold leading-[1.16] sm:text-4xl lg:text-5xl">{sheet.title}</h1>
+              <Link to={`/artist/${sheet.artistSlug}`} className="mt-2 inline-flex text-base text-muted-foreground hover:text-foreground hover:underline sm:text-lg">
                 {sheet.artist}
               </Link>
             </div>
 
-            <div className="mt-6 inline-flex flex-wrap rounded-full bg-muted/70 p-1">
+            <div className="inline-flex w-fit flex-wrap rounded-full bg-muted/70 p-1 lg:ml-auto">
               {sheet.variants.map((variant, index) => (
                 <FluidChoice key={variant.tier} onClick={() => setVariantIndex(index)} active={variantIndex === index}>
                   {variant.tier}
@@ -62,23 +62,23 @@ export function SheetPage() {
             </div>
           </div>
 
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-            <FluidPanel className="overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
-              <div className="flex items-center justify-between gap-3 bg-muted/20 px-5 py-4">
+          <div className="grid min-h-0 flex-1 items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <FluidPanel className="flex min-h-0 flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
+              <div className="flex shrink-0 items-center justify-between gap-3 bg-muted/20 px-5 py-3">
                 <FluidBadge className="bg-background text-foreground ring-1 ring-border/60">{activeVariant.tier}</FluidBadge>
                 <FluidCopy value={activeVariant.body} />
               </div>
-              <div className="relative bg-background/35">
+              <div className="relative min-h-0 flex-1 bg-background/35">
                 <SheetNotation body={activeVariant.body} />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card via-card/80 to-transparent" />
               </div>
             </FluidPanel>
 
-            <aside className="lg:sticky lg:top-24 lg:self-start">
+            <aside className="min-h-0 lg:self-start">
               <FluidPanel className="border border-border/70 bg-card p-3">
                 {sheet.imageUrl ? (
                   <div className="mb-3 overflow-hidden rounded-xl bg-muted ring-1 ring-border/45">
-                    <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                    <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="aspect-[16/10] w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10" />
                   </div>
                 ) : null}
                 <FluidButton variant="outline" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
@@ -129,7 +129,7 @@ function SheetNotation({ body }: { body: string }) {
   const lines = body.split(/\r?\n/);
 
   return (
-    <div className="max-h-[min(66dvh,760px)] overflow-y-auto px-5 pb-8 pt-5 font-mono text-[13px] leading-7 text-foreground/90 sm:px-6 sm:text-sm">
+    <div className="h-full overflow-y-auto px-5 pb-8 pt-5 font-mono text-[13px] leading-7 text-foreground/90 sm:px-6 sm:text-sm">
       {lines.map((line, lineIndex) => {
         const parts = line.split(/(\s+)/);
 

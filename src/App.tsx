@@ -17,6 +17,7 @@ const navItems = [
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const isSheetPage = location.pathname.startsWith("/sheet");
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -61,7 +62,7 @@ export default function App() {
         </div>
       </header>
 
-      <main>
+      <main className={cn(isSheetPage && "h-[calc(100dvh-4rem)] overflow-hidden")}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/sheet/*" element={<SheetPage />} />
@@ -70,25 +71,27 @@ export default function App() {
         </Routes>
       </main>
 
-      <footer className="bg-muted/20">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-          <div className="font-medium text-foreground">VirtualPianoPedia</div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link to="/converter" className="inline-flex items-center gap-1 text-foreground hover:underline">
-              <SparkleIcon className="size-4" />
-              Convert
-            </Link>
-            <Link to="/" className="inline-flex items-center gap-1 text-foreground hover:underline">
-              <MagnifyingGlassIcon className="size-4" />
-              Browse
-            </Link>
-            <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground hover:underline">
-              <GithubLogoIcon className="size-4" />
-              GitHub
-            </a>
+      {!isSheetPage ? (
+        <footer className="bg-muted/20">
+          <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+            <div className="font-medium text-foreground">VirtualPianoPedia</div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <Link to="/converter" className="inline-flex items-center gap-1 text-foreground hover:underline">
+                <SparkleIcon className="size-4" />
+                Convert
+              </Link>
+              <Link to="/" className="inline-flex items-center gap-1 text-foreground hover:underline">
+                <MagnifyingGlassIcon className="size-4" />
+                Browse
+              </Link>
+              <a href="https://github.com/jasperdevs/VirtualPianoPedia" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground hover:underline">
+                <GithubLogoIcon className="size-4" />
+                GitHub
+              </a>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      ) : null}
     </div>
   );
 }
