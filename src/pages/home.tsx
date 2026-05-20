@@ -4,8 +4,12 @@ import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
   ArrowUpRightIcon,
+  AtomIcon,
+  FlowerLotusIcon,
   ClockIcon,
+  ConfettiIcon,
   GaugeIcon,
+  HeartIcon,
   MagnifyingGlassIcon,
   MetronomeIcon,
   MusicNotesIcon,
@@ -162,9 +166,17 @@ export function HomePage() {
 const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
   "All Sheets": MusicNotesIcon,
   Favorites: StarIcon,
+  Easy: HeartIcon,
   Normal: GaugeIcon,
   Hard: GaugeIcon,
+  Expert: GaugeIcon,
   Classical: PianoKeysIcon,
+  Baroque: FlowerLotusIcon,
+  Romantic: HeartIcon,
+  Ragtime: PianoKeysIcon,
+  Dance: ConfettiIcon,
+  Folk: MusicNotesIcon,
+  Modern: AtomIcon,
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {

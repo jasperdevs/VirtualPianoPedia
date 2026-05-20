@@ -1,0 +1,15 @@
+[9-qd] e [qd] e g [wf] e S [9-qp] e [qp] e P [qp] e i
+[9-qy] [eu] [qi] e [qi] e u [6-0T] e y [0u] [ei] u [0y] [eT] [9-qe]
+e [qd] e g [wf] e S [9-qp] e [qp] e P [qp] e i [9-qy]
+[eu] [qi] e [qi] e u [6-0T] e y [0u] [ei] u [9qy] [9-qd] e [qd]
+e g [wf] e S [9-qp] e [qp] e P [qp] e i [9-qy] [eu] [qi]
+e [qi] e u [6-0T] e y [0u] [ei] u [0y] [eT] [9-qe] e [qd] e
+g [wf] e S [9-qp] e [qp] e P [qp] e i [9-qy] [eu] [qi] e
+[qi] e u [6-0T] e y [0u] [ei] u [9qy] [9qe] 6 [9qy] 6 [9qi] 6
+y [0wT] 6 y [0wu] [6i] u [0wy] [6T] [9qe] 6 [9qy] 6 [9qi] 6 y
+[0wT] 6 y [0wu] [6i] u [0wy] [6y] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT]
+6 y [0wu] [6i] u [0wy] [6T] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT] 6
+y [0wu] [6i] u [9qy] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT] 6 y [0wu]
+[6i] u [0wy] [6T] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT] 6 y [0wu] [6i]
+u [0wy] [6y] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT] 6 y [0wu] [6i] u
+[0wy] [6T] [9qe] 6 [9qy] 6 [9qi] 6 y [0wT] 6 y [0wu] [6i] u [9qy]

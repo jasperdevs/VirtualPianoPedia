@@ -103,9 +103,17 @@ export const sheets: Sheet[] = Array.from(grouped.entries())
 export const categoryNav = [
   "All Sheets",
   "Favorites",
+  "Easy",
   "Normal",
   "Hard",
+  "Expert",
   "Classical",
+  "Baroque",
+  "Romantic",
+  "Ragtime",
+  "Dance",
+  "Folk",
+  "Modern",
 ] as const;
 
 export function getSheet(slug: string) {

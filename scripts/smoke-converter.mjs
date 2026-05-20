@@ -1,0 +1,62 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import process from "node:process";
+import { execFileSync } from "node:child_process";
+import midiPackage from "@tonejs/midi";
+
+const { Midi } = midiPackage;
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "vpp-converter-"));
+const inputPath = path.join(tmpDir, "smoke.mid");
+const outDir = path.join(tmpDir, "sheets");
+const midi = new Midi();
+
+midi.header.setTempo(120);
+const track = midi.addTrack();
+track.addNote({ midi: 36, time: 0, duration: 0.4 });
+track.addNote({ midi: 37, time: 0.5, duration: 0.4 });
+track.addNote({ midi: 60, time: 1, duration: 0.4 });
+track.addNote({ midi: 64, time: 1.5, duration: 0.4 });
+track.addNote({ midi: 67, time: 2, duration: 1 });
+track.addNote({ midi: 72, time: 2, duration: 1 });
+
+fs.writeFileSync(inputPath, Buffer.from(midi.toArray()));
+execFileSync(
+  process.execPath,
+  [
+    "scripts/convert-midi.mjs",
+    inputPath,
+    "--title",
+    "Smoke Test",
+    "--artist",
+    "Test Composer",
+    "--category",
+    "Classical",
+    "--tier",
+    "normal",
+    "--out",
+    outDir,
+  ],
+  { stdio: "pipe" },
+);
+
+const meta = fs.readFileSync(path.join(outDir, "test-composer", "smoke-test", "_meta.md"), "utf8");
+const sheet = fs.readFileSync(path.join(outDir, "test-composer", "smoke-test", "normal.md"), "utf8");
+
+assert(meta.includes("tempo: 120"), "tempo was not read from MIDI");
+assert(meta.includes('length: "00:03"'), "length was not calculated from MIDI");
+assert(sheet.includes("1"), "C2 did not map to 1");
+assert(sheet.includes("!"), "C#2 did not map to !");
+assert(sheet.includes("t"), "C4 did not map to t");
+assert(/\[[^\]]*(o|s)[^\]]*(s|o)[^\]]*\]/.test(sheet), "same-time notes were not grouped into a chord");
+assert(!/\[\[|\]\]/.test(sheet), "nested bracket output was generated");
+
+fs.rmSync(tmpDir, { recursive: true, force: true });
+console.log("converter smoke ok");
+
+function assert(condition, message) {
+  if (!condition) {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    throw new Error(message);
+  }
+}

@@ -1,0 +1,67 @@
+[yd] [ig] [EP] [y-d-]
+[wo] [ep] [EP] [9-y-]
+[(Y] [qi] [wo] [(Y] [9y] [8t] [qi] [4q] [4qig] [@(oh] [18pj] [^^PJ] d [qEyg] [pj] 4
+[oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [qEyP] i [(Yh] o [^EO] p [8tP]
+h [*To] f [9yg] i [4qd] [oh] [@(] [pj] [18] [Dg] [^^PJ] d [qEyg] [pj] 4
+[oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [*P] i [8s] a [etis] d [8s]
+P [wEtup] o [qeti] s [4qD] [oh] [@(] [pj] [18] [Dg] [^^PJ] d [qEyg] [pj] 4
+[oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [qEyP] i [(Yh] o [^EO] p [8tP]
+h [*To] f [9yig] [Pd] [(Yoh] [pj] [qi] [oh] [(Y] [PD] [9yig] [Pd] [qEyoh] [ig] 5
+d [wryia] o [8wEud] [8wEys] [qeYd] [qeYs] [^Ey-P-] [4q] [5w] [4q] [29] [18] [^^] [4qig] [@(oh]
+[18pj] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [qEyP]
+i [(Yh] o [^EO] p [8tP] h [*To] f [9yg] i [4qd] [oh] [@(] [pj] [18]
+[Dg] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [*P]
+i [8s] a [etis] d [8s] P [wEtup] o [qeti] s [4qD] [oh] [@(] [pj] [18]
+[Dg] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9 d [qEyP]
+i [(Yh] o [^EO] p [8tP] h [*To] f [9yig] [Pd] [(Yoh] [pj] [qi] [oh] [(Y]
+[PD] [9yig] [Pd] [qEyoh] [ig] 5 d [wryia] o [8wEud] [8wEys] [qeYd] [qeYs] [^Ey-P-] [4q] [5w]
+[4q] [29] [18] [^^] [4q] [5w] [%W] [6e] [qtYpDh] [4pDh] [qtYpDh] [8pDg] [pDj] [qtY] [pDh] 4
+g [qtYD] s [^P] [qEyPdh] [4Pdh] [qEyPdh] [^Pdg] [PdJ] [qEy] [Pdh] 4 d [qEyg] [PJ] [8pDj]
+[qtYODH] [pDj] 4 [PJ] [qtY] g [6sDl] [qeYak] [sDl] 4 [SL] [qeY] g [^dz] P [qEyd]
+g [0ETpSj] [oSh] [0ET] [i-d-g-] [qEy] [4q] [5w] [%W] [6e] [qtYpDh] [4pDh] [qtYpDh] [8pDg] [pDj] [qtY]
+[pDh] 4 g [qtYD] s [^P] [qEyPdh] [4Pdh] [qEyPdh] [^Pdh] [Pdg] [qEy] [Pdg] 9 P [qWEyd]
+g [(wEYoh] [5wPJ] [4qpj] [@(oh] [29ig] [Pd] [qEyoh] [ig] 5 d [wryia] o [8wEud] [8wEus] [qeYd]
+[qeYs] [^Ey-P-] [4q] [5w] [%W] [6e] [qtYpDh] [4pDh] [qtYpDh] [8pDg] [pDj] [qtY] [pDh] 4 g [qtYD]
+s [^P] [qEyPdh] [4Pdh] [qEyPdh] [^Pdg] [PdJ] [qEy] [Pdh] 4 d [qEyg] [PJ] [8pDj] [qtYODH] [pDj]
+4 [PJ] [qtY] g [6sDl] [qeYak] [sDl] 4 [SL] [qeY] g [^dz] P [qEyd] g [0ETpSj]
+[oSh] [0ET] [i-d-g-] [qEy] [4q] [5w] [%W] [6e] [qtYpDh] [4pDh] [qtYpDh] [8pDg] [pDj] [qtY] [pDh] 4
+g [qtYD] s [^P] [qEyPdh] [4Pdh] [qEyPdh] [^Pdh] [Pdg] [qEy] [Pdg] 9 P [qWEyd] g [(wEYoh]
+[5wPJ] [4qpj] [@(oh] [29ig] [Pd] [qEyoh] [ig] 5 d [wryia] o [8wEud] [8wEus] [qeYd] [qeYs] [^EyP]
+[4qig] [@(oh] [18pj] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9
+d [qEyP] i [(Yh] o [^EO] p [8tP] h [*To] f [9yg] i [4qd] [oh] [@(]
+[pj] [18] [Dg] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9
+d [*P] i [8s] a [etis] d [8s] P [wEtup] o [qeti] s [4qD] [oh] [@(]
+[pj] [18] [Dg] [^^PJ] d [qEyg] [pj] 4 [oh] [qEy] [Pd] [^ig] [Pd] [qEyoh] [ig] 9
+d [qEyP] i [(Yh] o [^EO] p [8tP] h [*To] f [9yig] [Pd] [(Yoh] [pj] [qi]
+[oh] [(Y] [PD] [9yig] [Pd] [qEyoh] [ig] 4 d [wryia] o [8wEud] [8wEus] [qeYd] [qeYs] [^Ey-P-]
+[4q] [5w] [4q] [29] [18] [^^]
+[^^PdgJ]
+[^^iOd] [iOd] [77] [iOS] [18iOs] [iOs] [!*iOa] [iOP] [29] [^^Og] P [18Og] P [29Og] P [@(o-D-]
+[5w] [%W] [6e] [^E] [8t] [9y] [(YoD] [^^] [55] [$$] [4-4-Ypd] [Yps] [Ypd] [6-6-] s p
+i [^-^-Odh] [Odg] [Odh] [2-9-] g d P [@(gc] [hJ] [EYoDZ] [dz] ^ [sl] [EYo] [Dh]
+[(PJ] [Dh] [EYosl] [PJ] 5 D [EYoh] J [%DZ] H [tYOl] [DZ] % [gc] [rYO] [DZ]
+[(PJ] D [EYoh] [PJ] [5w] [sl] [$Q] [PJ] [4qig] [DZ] [qEydz] [sl] q [ig] [eYoh] [pj]
+[EyP-J-] [^^] [55] [$$] [4-4-Ypd] [Yps] [Ypd] [6-6-] s p i [^-^-Odh] [Odg] [Odh] [2-9-] g
+d P [@(gc] [hJ] [EYoDZ] [dz] ^ [sl] [EYo] [Dh] [(PJ] [Dh] [EYosl] [PJ] [5w] D
+[EYoh] [PJ] [%Ws-g-H-l-] [tiO] [4qsgHl] [5wagHk] [%W] [^EPDhJ] [Dh] [EYosl] [PJ] 8 h [Etuf] s [qtYph]
+[qtYpg] [EyOh] [EyOg] [(Yo-D-] [^^] [55] [$$] [4-4-Ypd] [Yps] [Ypd] [6-6-] s p i [^-^-Odh] [Odg]
+[Odh] [2-9-] g d P [@(gc] [hJ] [EYoDZ] [dz] ^ [sl] [EYo] [Dh] [(PJ] [Dh] [EYosl]
+[PJ] 5 D [EYoh] J [%DZ] H [tYOl] [DZ] % [gc] [rYO] [DZ] [(PJ] D [EYoh]
+[PJ] [5w] [sl] [$Q] [PJ] [4qig] [DZ] [qEydz] [sl] q [ig] [eYoh] [pj] [EyP-J-] [^^] [55]
+[$$] [4-4-Ypd] [Yps] [Ypd] [6-6-] s p i [^-^-Odh] [Odg] [Odh] [2-9-] g d P [@(gc]
+[hJ] [EYoDZ] [dz] ^ [sl] [EYo] [Dh] [(PJ] [Dh] [EYosl] [PJ] [5w] D [EYoh] [PJ] [%Ws-g-H-l-]
+[tiO] [4qsgHl] [5wagHk] [%W] [^EPDhJ] [Dh] [EYosl] [PJ] 8 h [Etuf] s [qtYph] [qtYpg] [EyOh] [EyOg]
+[(Yo-D-] [^E] [^-^-PJ] [ak] [4qsl] H [EyOJ] [sl] ^ [SL] [EyO] H [qdz] H [EyOJ] [dz]
+^ [hv] [EyO] [gc] [(DZ] h [EYoJ] [dz] ^ [sl] [EYo] [Dh] [(P-J-] [EYo] ^ [PJ]
+[EYosl] [dz] [qDZ] H [EyOJ] [dz] ^ [sl] [EyO] d [9P-J-] [EyO] ^ [PJ] [EyOsl] [dz]
+[(DZ] h [EYoJ] [dz] ^ [sl] [EYo] D [(P-J-] [EYo] [^-^-PHJ] [aHk] [4qsl] H [EyOJ] [sl]
+^ [SL] [EyO] H [qdz] H [EyOJ] [dz] ^ [hv] [EyO] [gc] [(DZ] h [EYoJ] [dz]
+^ [sl] [EYo] [Dh] [(PJ] [Dh] [EYosl] [PJ] [5w] D [EYoh] [PJ] [%Ws-g-H-l-] [tiO] [4qsgHl] [5wagHk]
+[%W] [^EPDhJ] [Dh] [EYosl] [PJ] 8 h [Etuf] s [qtYph] [qtYpg] [EyOh] [EyOg] [(Yo-D-] [^E] [^-^-PHJ]
+[aHk] [4qsl] H [EyOJ] [sl] ^ [SL] [EyO] H [qdz] H [EyOJ] [dz] ^ [hv] [EyO]
+[gc] [(DZ] h [EYoJ] [dz] ^ [sl] [EYo] [Dh] [(P-J-] [EYo] ^ [PJ] [EYosl] [dz] [qDZ]
+H [EyOJ] [dz] ^ [sl] [EyO] d [9P-J-] [EyO] ^ [PJ] [EyOsl] [dz] [(DZ] h [EYoJ]
+[dz] ^ [sl] [EYo] D [(P-J-] [EYo] [^-^-PHJ] [aHk] [4qsl] H [EyOJ] [sl] ^ [SL] [EyO]
+H [qdz] H [EyOJ] [dz] ^ [hv] [EyO] [gc] [(DZ] h [EYoJ] [dz] ^ [sl] [EYo]
+[Dh] [(PJ] [Dh] [EYosl] [PJ] [5w] D [EYoh] [PJ] [%Ws-g-H-l-] [tiO] [4qsgHl] [5wagHk] [%W] [^EPDhJ] [Dh]
+[EYosl] [PJ] 8 h [Etuf] s [qtYph] [qtYpg] [EyOh] [EyOg] [(Yo-D-] [^E] [@(DhJZ]
