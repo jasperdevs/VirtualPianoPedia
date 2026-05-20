@@ -67,7 +67,7 @@ export function SheetPage() {
                 <FluidBadge>{activeVariant.tier}</FluidBadge>
                 <FluidCopy value={activeVariant.body} />
               </div>
-              <pre className="max-h-[760px] overflow-auto px-5 pb-7 pt-3 font-mono text-sm leading-8 text-foreground sm:text-base">{activeVariant.body}</pre>
+              <pre className="max-h-[760px] overflow-y-auto whitespace-pre-wrap break-words px-5 pb-7 pt-3 font-mono text-sm leading-8 text-foreground sm:text-base">{activeVariant.body}</pre>
             </FluidPanel>
           </div>
 
