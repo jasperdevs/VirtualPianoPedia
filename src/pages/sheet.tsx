@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type React from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon, GithubLogoIcon, GaugeIcon, MetronomeIcon, MusicNoteIcon, StarIcon } from "@phosphor-icons/react";
-import { FluidBadge } from "@/components/fluid/FluidBadge";
 import { FluidButton } from "@/components/fluid/FluidButton";
 import { FluidChoice } from "@/components/fluid/FluidChoice";
 import { FluidCopy } from "@/components/fluid/FluidCopy";
@@ -70,7 +69,7 @@ export function SheetPage() {
         </FluidButton>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4">
-          <div className="grid shrink-0 gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+          <div className="shrink-0">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap gap-2">
                 <TagLink to={`/?category=${encodeURIComponent(sheet.category)}`} label={sheet.category} primary />
@@ -85,21 +84,19 @@ export function SheetPage() {
                 {sheet.artist}
               </Link>
             </div>
-
-            <div className="inline-flex w-fit flex-wrap rounded-full bg-muted/70 p-1 lg:ml-auto">
-              {sheet.variants.map((variant, index) => (
-                <FluidChoice key={variant.tier} onClick={() => setVariantSelection({ slug: sheet.slug, index })} active={activeVariantIndex === index}>
-                  {variant.tier}
-                </FluidChoice>
-              ))}
-            </div>
           </div>
 
           <div className="grid min-h-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div ref={sheetPanelRef} className="min-w-0 self-start">
               <FluidPanel className="flex max-h-[calc(100dvh-20rem)] min-h-[22rem] flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
-                <div className="flex shrink-0 items-center justify-between gap-3 bg-muted/20 px-5 py-3">
-                  <FluidBadge className="bg-background text-foreground ring-1 ring-border/60">{activeVariant.tier}</FluidBadge>
+                <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 bg-muted/20 px-5 py-3">
+                  <div className="inline-flex w-fit flex-wrap rounded-full bg-background/80 p-1 ring-1 ring-border/60">
+                    {sheet.variants.map((variant, index) => (
+                      <FluidChoice key={variant.tier} onClick={() => setVariantSelection({ slug: sheet.slug, index })} active={activeVariantIndex === index}>
+                        {variant.tier}
+                      </FluidChoice>
+                    ))}
+                  </div>
                   <FluidCopy value={activeVariant.body} />
                 </div>
                 <div className="relative min-h-0 bg-background/35">
