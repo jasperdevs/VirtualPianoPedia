@@ -104,17 +104,21 @@ function SheetNotation({ body }: { body: string }) {
   return (
     <div className="max-h-[min(66dvh,760px)] overflow-y-auto px-5 pb-8 pt-5 font-mono text-[13px] leading-7 text-foreground/90 sm:px-6 sm:text-sm">
       {lines.map((line, lineIndex) => {
-        const tokens = line.trim().split(/\s+/).filter(Boolean);
+        const parts = line.split(/(\s+)/);
 
-        if (!tokens.length) return <div key={lineIndex} className="h-4" />;
+        if (!line.trim()) return <div key={lineIndex} className="h-4" />;
 
         return (
-          <div key={lineIndex} className="flex flex-wrap items-center gap-x-1.5 gap-y-2 py-0.5">
-            {tokens.map((token, tokenIndex) => (
-              <span key={`${lineIndex}-${tokenIndex}-${token}`} className={notationTokenClass(token)}>
-                {token}
-              </span>
-            ))}
+          <div key={lineIndex} className="whitespace-pre-wrap break-words py-[1px]">
+            {parts.map((part, partIndex) =>
+              /^\s+$/.test(part) ? (
+                <span key={`${lineIndex}-${partIndex}`}>{part}</span>
+              ) : (
+                <span key={`${lineIndex}-${partIndex}-${part}`} className={notationTokenClass(part)}>
+                  {part}
+                </span>
+              ),
+            )}
           </div>
         );
       })}
@@ -124,11 +128,11 @@ function SheetNotation({ body }: { body: string }) {
 
 function notationTokenClass(token: string) {
   return cn(
-    "inline-flex min-h-6 items-center rounded-md px-1 font-mono tabular-nums",
-    /^\[[^\]]+\]$/.test(token) && "bg-muted px-1.5 text-foreground ring-1 ring-border/50",
-    /^\([^)]+\)$/.test(token) && "bg-muted/45 px-1.5 text-muted-foreground",
-    token === "|" && "px-0 text-muted-foreground/60",
-    token.includes("-") && token !== "|" && "text-amber-300",
+    "inline rounded-[5px] font-mono tabular-nums",
+    /^\[[^\]]+\]$/.test(token) && "bg-muted/55 px-1 py-0.5 text-foreground ring-1 ring-border/35",
+    /^\([^)]+\)$/.test(token) && "bg-muted/25 px-1 py-0.5 text-muted-foreground",
+    token === "|" && "px-0.5 text-muted-foreground/45",
+    token.includes("-") && token !== "|" && "text-amber-200",
     !/^\[[^\]]+\]$/.test(token) && !/^\([^)]+\)$/.test(token) && token !== "|" && !token.includes("-") && "text-foreground/90",
   );
 }
