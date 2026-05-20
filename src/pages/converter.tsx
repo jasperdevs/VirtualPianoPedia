@@ -9,7 +9,7 @@ import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { FluidSwitch } from "@/components/fluid/FluidSwitch";
 import { FluidTabs } from "@/components/fluid/FluidTabs";
 import { FluidTextarea } from "@/components/fluid/FluidTextarea";
-import { convertInput, createMetaMarkdown, type ConversionMeta, type ConversionResult } from "@/lib/converter";
+import { convertInput, createMetaMarkdown, type ArrangementMode, type ConversionMeta, type ConversionResult } from "@/lib/converter";
 import { difficultyTiers, type DifficultyTier } from "@/lib/sheets";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +31,7 @@ export function ConverterPage() {
   const [sustain, setSustain] = useState(true);
   const [groupChords, setGroupChords] = useState(true);
   const [includeTiming, setIncludeTiming] = useState(false);
+  const [arrangement, setArrangement] = useState<ArrangementMode>("balanced");
   const [fileName, setFileName] = useState("converted-sheet-files.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [artistFolder, setArtistFolder] = useState("unknown");
@@ -55,7 +56,7 @@ export function ConverterPage() {
   async function handleConvert(input: string | ArrayBuffer, name = "converted-sheet.md") {
     setError("");
     try {
-      const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming });
+      const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming, arrangement });
       setResult(converted);
       setMeta(converted.meta);
       setArtistFolder(slugify(converted.meta.artist));
@@ -140,6 +141,10 @@ export function ConverterPage() {
               {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
               <div className="grid gap-2 rounded-2xl bg-background/35 p-2">
+                <div className="grid gap-2 px-1 pb-1">
+                  <span className="text-sm font-medium">Arrangement</span>
+                  <FluidTabs items={["balanced", "melody", "full"] as ArrangementMode[]} value={arrangement} onChange={setArrangement} />
+                </div>
                 <FluidSwitch enabled={sustain} onChange={setSustain} label="Sustain" hint="Mark long notes with -" />
                 <FluidSwitch enabled={groupChords} onChange={setGroupChords} label="Chords" hint="Group same-time notes in brackets" />
                 <FluidSwitch enabled={includeTiming} onChange={setIncludeTiming} label="Timing hints" hint="Add rough rest markers" />

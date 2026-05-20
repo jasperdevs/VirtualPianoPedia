@@ -67,7 +67,8 @@ const virtualPianoKeys = [
 
 const firstVirtualPianoMidi = 36;
 const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
-const maxChordKeys = 6;
+const defaultMaxChordKeys = 6;
+const defaultGridDivision = 24;
 
 const noteNameToSemitone = new Map<string, number>([
   ["C", 0],
@@ -84,11 +85,16 @@ const noteNameToSemitone = new Map<string, number>([
   ["B", 11],
 ]);
 
+export type ArrangementMode = "balanced" | "melody" | "full";
+
 export type ConvertOptions = {
   transpose: number;
   sustain: boolean;
   groupChords: boolean;
   includeTiming: boolean;
+  arrangement?: ArrangementMode;
+  gridDivision?: number;
+  maxChordKeys?: number;
 };
 
 export type ConversionMeta = {
@@ -123,6 +129,10 @@ type MidiNoteLike = {
   ticks: number;
   duration: number;
   velocity: number;
+  trackIndex: number;
+  trackName: string;
+  instrumentFamily: string;
+  instrumentName: string;
 };
 
 type ShiftedMidiNote = MidiNoteLike & {
@@ -158,6 +168,7 @@ function isPercussionTrack(track: { channel?: number; instrument?: { percussion?
 }
 
 function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
+  const maxChordKeys = Math.max(1, Math.min(10, Math.round(options.maxChordKeys ?? defaultMaxChordKeys)));
   const byKey = new Map<string, { key: string; midi: number; duration: number; velocity: number }>();
 
   for (const note of notes) {
@@ -169,7 +180,7 @@ function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
     const current = byKey.get(key);
     if (!current || note.duration > current.duration) {
       byKey.set(key, {
-        key: options.sustain && note.duration > 0.8 ? `${key}-` : key,
+        key,
         midi: fitted,
         duration: note.duration,
         velocity: note.velocity,
@@ -191,10 +202,87 @@ function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
   }
 
   const keys = playable.map((note) => note.key);
+  const sustainLength = options.sustain ? Math.min(4, Math.max(0, Math.round(Math.max(...playable.map((note) => note.duration)) / 0.5) - 1)) : 0;
+  const sustainSuffix = "-".repeat(sustainLength);
+
   return {
-    text: options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "),
+    text: options.groupChords && keys.length > 1 ? `[${keys.join("")}]${sustainSuffix}` : keys.map((key) => `${key}${sustainSuffix}`).join(" "),
     trimmed,
   };
+}
+
+function selectArrangementNotes(notes: MidiNoteLike[], arrangement: ArrangementMode) {
+  if (arrangement === "full") return notes;
+
+  const trackStats = Array.from(
+    notes.reduce((tracks, note) => {
+      const stats = tracks.get(note.trackIndex) ?? {
+        trackIndex: note.trackIndex,
+        name: note.trackName,
+        family: note.instrumentFamily,
+        instrument: note.instrumentName,
+        count: 0,
+        midiTotal: 0,
+        velocityTotal: 0,
+      };
+
+      stats.count += 1;
+      stats.midiTotal += note.midi;
+      stats.velocityTotal += note.velocity;
+      tracks.set(note.trackIndex, stats);
+      return tracks;
+    }, new Map<number, { trackIndex: number; name: string; family: string; instrument: string; count: number; midiTotal: number; velocityTotal: number }>()),
+  ).map(([, stats]) => ({
+    ...stats,
+    averageMidi: stats.midiTotal / stats.count,
+    averageVelocity: stats.velocityTotal / stats.count,
+  }));
+
+  if (trackStats.length <= 2) return notes;
+
+  const bassTrack = trackStats
+    .filter((track) => /bass/i.test(`${track.family} ${track.instrument} ${track.name}`) || track.averageMidi < 48)
+    .sort((a, b) => a.averageMidi - b.averageMidi || b.count - a.count)[0];
+  const melodicTracks = trackStats
+    .filter((track) => track.trackIndex !== bassTrack?.trackIndex)
+    .map((track) => ({
+      ...track,
+      score:
+        track.averageMidi +
+        track.averageVelocity * 18 +
+        (/piano|guitar|synth|organ|lead|pad/i.test(`${track.family} ${track.instrument} ${track.name}`) ? 8 : 0) -
+        Math.max(0, track.count / 900),
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  const keep = new Set<number>();
+  const melodicLimit = arrangement === "melody" ? 2 : 3;
+
+  for (const track of melodicTracks.slice(0, melodicLimit)) {
+    keep.add(track.trackIndex);
+  }
+
+  if (arrangement === "balanced" && bassTrack) {
+    keep.add(bassTrack.trackIndex);
+  }
+
+  return notes.filter((note) => keep.has(note.trackIndex));
+}
+
+function chooseQuantizeTicks(notes: MidiNoteLike[], ppq: number, requestedDivision?: number) {
+  if (requestedDivision && Number.isFinite(requestedDivision) && requestedDivision > 0) {
+    return Math.max(1, Math.round(ppq / requestedDivision));
+  }
+
+  const candidates = [12, 16, 24, 32].map((division) => Math.max(1, Math.round(ppq / division)));
+
+  return candidates
+    .map((ticks) => {
+      const totalError = notes.reduce((sum, note) => sum + Math.abs(note.ticks - Math.round(note.ticks / ticks) * ticks), 0);
+      const averageError = totalError / Math.max(1, notes.length);
+      return { ticks, averageError };
+    })
+    .sort((a, b) => a.averageError - b.averageError || a.ticks - b.ticks)[0].ticks;
 }
 
 function chooseOctaveShift(notes: MidiNoteLike[], transpose: number) {
@@ -254,18 +342,22 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
   if (isMidi && input instanceof ArrayBuffer) {
     const midi = new Midi(input);
     const skippedTracks = midi.tracks.filter(isPercussionTrack).length;
-    const notes = midi.tracks
-      .filter((track) => !isPercussionTrack(track))
-      .flatMap((track) => track.notes)
+    const rawNotes = midi.tracks
+      .flatMap((track, trackIndex) => (isPercussionTrack(track) ? [] : track.notes.map((note) => ({ note, track, trackIndex }))))
       .map((note) => ({
-        midi: note.midi,
-        name: note.name,
-        time: note.time,
-        ticks: note.ticks,
-        duration: note.duration,
-        velocity: note.velocity,
+        midi: note.note.midi,
+        name: note.note.name,
+        time: note.note.time,
+        ticks: note.note.ticks,
+        duration: note.note.duration,
+        velocity: note.note.velocity,
+        trackIndex: note.trackIndex,
+        trackName: note.track.name,
+        instrumentFamily: note.track.instrument.family,
+        instrumentName: note.track.instrument.name,
       }))
       .sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
+    const notes = selectArrangementNotes(rawNotes, options.arrangement ?? "balanced").sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
 
     noteCount = notes.length;
     const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
@@ -278,6 +370,10 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
 
     if (skippedTracks) {
       warnings.push(`Skipped ${skippedTracks} drum/percussion MIDI track${skippedTracks === 1 ? "" : "s"}.`);
+    }
+
+    if (rawNotes.length !== notes.length) {
+      warnings.push(`Kept ${notes.length} of ${rawNotes.length} non-drum MIDI notes using ${options.arrangement ?? "balanced"} arrangement mode.`);
     }
 
     const octaveShift = chooseOctaveShift(notes, options.transpose);
@@ -296,7 +392,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     }
 
     const ppq = Math.max(1, midi.header.ppq || 480);
-    const quantizeTicks = Math.max(1, Math.round(ppq / 12));
+    const quantizeTicks = chooseQuantizeTicks(notes, ppq, options.gridDivision ?? defaultGridDivision);
     const groups: Array<{ time: number; ticks: number; notes: typeof shiftedNotes }> = [];
 
     for (const note of shiftedNotes) {

@@ -81,6 +81,9 @@ Useful options:
 --tempo 120
 --length 01:30
 --tags classical,piano
+--arrangement balanced
+--grid 24
+--max-chord 6
 --timing
 --no-sustain
 --no-chords
