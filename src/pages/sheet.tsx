@@ -36,10 +36,10 @@ export function SheetPage() {
         <div className="space-y-6">
           <div className="min-w-0">
             <div className="mb-4 flex flex-wrap gap-2">
-              <FluidBadge color="white">{sheet.category}</FluidBadge>
-              <FluidBadge>{sheet.game}</FluidBadge>
+              <TagLink to={`/?category=${encodeURIComponent(sheet.category)}`} label={sheet.category} primary />
+              <TagLink to={`/?tag=${encodeURIComponent(sheet.game)}`} label={sheet.game} />
               {sheet.tags.map((tag) => (
-                <FluidBadge key={tag}>{tag}</FluidBadge>
+                <TagLink key={tag} to={`/?tag=${encodeURIComponent(tag)}`} label={tag} />
               ))}
             </div>
 
@@ -95,6 +95,20 @@ export function SheetPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+function TagLink({ to, label, primary = false }: { to: string; label: string; primary?: boolean }) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "inline-flex h-6 select-none items-center rounded-full px-2.5 text-xs font-medium transition-[background-color,color] hover:bg-foreground hover:text-background",
+        primary ? "bg-foreground text-background" : "bg-muted text-muted-foreground",
+      )}
+    >
+      {label}
+    </Link>
   );
 }
 

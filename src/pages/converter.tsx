@@ -7,8 +7,22 @@ import { FluidCopy } from "@/components/fluid/FluidCopy";
 import { FluidInput } from "@/components/fluid/FluidInput";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { FluidSwitch } from "@/components/fluid/FluidSwitch";
+import { FluidTabs } from "@/components/fluid/FluidTabs";
 import { FluidTextarea } from "@/components/fluid/FluidTextarea";
-import { convertInput, type ConversionResult } from "@/lib/converter";
+import { convertInput, createMetaMarkdown, type ConversionMeta, type ConversionResult } from "@/lib/converter";
+import { difficultyTiers, type DifficultyTier } from "@/lib/sheets";
+
+const defaultMeta: ConversionMeta = {
+  title: "Converted Sheet",
+  artist: "Unknown",
+  game: "Roblox Virtual Piano",
+  category: "Pop",
+  tempo: 100,
+  length: "00:00",
+  transpose: 0,
+  source: "Converter submission",
+  tags: ["submission"],
+};
 
 export function ConverterPage() {
   const [text, setText] = useState("C4 D4 E4 G4 A4\nC5 B4 A4 G4");
@@ -16,21 +30,23 @@ export function ConverterPage() {
   const [sustain, setSustain] = useState(true);
   const [groupChords, setGroupChords] = useState(true);
   const [includeTiming, setIncludeTiming] = useState(false);
-  const [fileName, setFileName] = useState("converted-sheet.txt");
+  const [fileName, setFileName] = useState("converted-sheet-files.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [artistFolder, setArtistFolder] = useState("unknown");
-  const [folderSlug, setFolderSlug] = useState("");
-  const [variantFile, setVariantFile] = useState("normal.md");
-  const [metaMarkdown, setMetaMarkdown] = useState("");
+  const [folderSlug, setFolderSlug] = useState("converted-sheet");
+  const [variantTier, setVariantTier] = useState<DifficultyTier>("Normal");
+  const [meta, setMeta] = useState<ConversionMeta>(defaultMeta);
   const [variantMarkdown, setVariantMarkdown] = useState("");
   const [error, setError] = useState("");
+
+  const metaMarkdown = useMemo(() => createMetaMarkdown(meta), [meta]);
+  const variantFile = `${variantTier.toLowerCase()}.md`;
 
   const editedMarkdown = useMemo(() => {
     if (!result) return "";
     const safeArtist = artistFolder.trim() || "unknown";
     const safeFolder = folderSlug.trim() || result.folderSlug;
-    const safeVariantFile = variantFile.trim() || "normal.md";
-    return `# src/content/sheets/${safeArtist}/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeArtist}/${safeFolder}/${safeVariantFile}\n\n${variantMarkdown.trimEnd()}\n`;
+    return `# src/content/sheets/${safeArtist}/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeArtist}/${safeFolder}/${variantFile}\n\n${variantMarkdown.trimEnd()}\n`;
   }, [artistFolder, folderSlug, metaMarkdown, result, variantFile, variantMarkdown]);
 
   const editedNoteCount = useMemo(() => variantMarkdown.split(/\s+/).filter(Boolean).length, [variantMarkdown]);
@@ -40,14 +56,24 @@ export function ConverterPage() {
     try {
       const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming });
       setResult(converted);
-      setArtistFolder("unknown");
+      setMeta(converted.meta);
+      setArtistFolder(slugify(converted.meta.artist));
       setFolderSlug(converted.folderSlug);
-      setVariantFile("normal.md");
-      setMetaMarkdown(converted.metaMarkdown);
+      setVariantTier("Normal");
       setVariantMarkdown(converted.variantMarkdown);
       setFileName(`${converted.folderSlug}-files.txt`);
     } catch (conversionError) {
       setError(conversionError instanceof Error ? conversionError.message : "Could not convert that file.");
+    }
+  }
+
+  function updateMeta<K extends keyof ConversionMeta>(field: K, value: ConversionMeta[K]) {
+    setMeta((current) => ({ ...current, [field]: value }));
+    if (field === "artist" && artistFolder === "unknown" && typeof value === "string") {
+      setArtistFolder(slugify(value));
+    }
+    if (field === "title" && (!folderSlug || folderSlug === result?.folderSlug) && typeof value === "string") {
+      setFolderSlug(slugify(value));
     }
   }
 
@@ -67,7 +93,7 @@ export function ConverterPage() {
       <div className="mx-auto w-full max-w-[1180px] min-w-0">
         <div className="border-b border-border/70 pb-5">
           <h1 className="text-3xl font-semibold sm:text-4xl">Converter</h1>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI or paste notes, then edit and copy the GitHub files</p>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI or paste notes, then edit the fields and copy the GitHub files.</p>
         </div>
 
         <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
@@ -96,10 +122,10 @@ export function ConverterPage() {
               </motion.label>
 
               <Field label="Paste notes">
-                <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-24 font-mono" />
+                <FluidTextarea value={text} onChange={(event) => setText(event.target.value)} className="min-h-24 font-mono" spellCheck={false} />
               </Field>
 
-              <Field label="Transpose">
+              <Field label="Transpose while converting">
                 <FluidInput type="number" value={transpose} onChange={(event) => setTranspose(Number(event.target.value))} />
               </Field>
 
@@ -119,12 +145,12 @@ export function ConverterPage() {
 
           <FluidPanel className="min-w-0 border border-border/70 bg-card p-4 sm:p-5">
             {result ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold">{result.title}</h2>
+                    <h2 className="text-xl font-semibold">{meta.title}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {editedNoteCount} notes · {result.duration}
+                      {editedNoteCount} notes · {meta.length}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -135,29 +161,59 @@ export function ConverterPage() {
                     </FluidButton>
                   </div>
                 </div>
+
                 <div className="grid gap-3">
-                  <div className="grid gap-3 sm:grid-cols-[1fr_1fr_160px]">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label="Title">
+                      <FluidInput value={meta.title} onChange={(event) => updateMeta("title", event.target.value)} />
+                    </Field>
+                    <Field label="Artist or composer">
+                      <FluidInput value={meta.artist} onChange={(event) => updateMeta("artist", event.target.value)} />
+                    </Field>
+                    <Field label="Category">
+                      <FluidInput value={meta.category} onChange={(event) => updateMeta("category", event.target.value)} />
+                    </Field>
+                    <Field label="Game">
+                      <FluidInput value={meta.game} onChange={(event) => updateMeta("game", event.target.value)} />
+                    </Field>
+                    <Field label="Target length">
+                      <FluidInput value={meta.length} onChange={(event) => updateMeta("length", event.target.value)} />
+                    </Field>
+                    <Field label="Tempo">
+                      <FluidInput type="number" value={meta.tempo} onChange={(event) => updateMeta("tempo", Number(event.target.value))} />
+                    </Field>
+                    <Field label="Transpose">
+                      <FluidInput type="number" value={meta.transpose} onChange={(event) => updateMeta("transpose", Number(event.target.value))} />
+                    </Field>
+                    <Field label="Source">
+                      <FluidInput value={meta.source} onChange={(event) => updateMeta("source", event.target.value)} />
+                    </Field>
                     <Field label="Artist folder">
                       <FluidInput value={artistFolder} onChange={(event) => setArtistFolder(slugify(event.target.value))} />
                     </Field>
                     <Field label="Song folder">
-                      <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(event.target.value)} />
-                    </Field>
-                    <Field label="Sheet file">
-                      <FluidInput value={variantFile} onChange={(event) => setVariantFile(event.target.value)} />
+                      <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(slugify(event.target.value))} />
                     </Field>
                   </div>
-                  <Field label="_meta.md">
-                    <FluidTextarea value={metaMarkdown} onChange={(event) => setMetaMarkdown(event.target.value)} className="min-h-40 font-mono" />
+
+                  <Field label="Tags">
+                    <FluidInput value={meta.tags.join(", ")} onChange={(event) => updateMeta("tags", event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean))} />
                   </Field>
-                  <Field label={variantFile || "normal.md"}>
-                    <FluidTextarea value={variantMarkdown} onChange={(event) => setVariantMarkdown(event.target.value)} className="min-h-52 font-mono" />
+
+                  <div className="grid gap-2">
+                    <span className="text-sm font-medium">Level</span>
+                    <FluidTabs items={[...difficultyTiers]} value={variantTier} onChange={setVariantTier} />
+                  </div>
+
+                  <Field label={variantFile}>
+                    <FluidTextarea value={variantMarkdown} onChange={(event) => setVariantMarkdown(event.target.value)} className="min-h-64 font-mono" spellCheck={false} />
                   </Field>
                 </div>
+
                 <FluidButton asChild className="w-full">
                   <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(artistFolder || "unknown")}/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
                     <GithubLogoIcon />
-                    Create folder on GitHub
+                    Start on GitHub
                     <ArrowUpRightIcon />
                   </a>
                 </FluidButton>
@@ -166,7 +222,7 @@ export function ConverterPage() {
               <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
                 <MagicWandIcon className="mb-5 size-12 text-muted-foreground" />
                 <h2 className="text-2xl font-semibold">No sheet yet</h2>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to edit the output</p>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to edit the output.</p>
               </div>
             )}
           </FluidPanel>

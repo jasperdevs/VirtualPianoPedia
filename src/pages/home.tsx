@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
@@ -26,11 +26,27 @@ type SortMode = "artist" | "song" | "length";
 const quickSearches = ["max richter", "debussy", "classical", "hard"];
 
 export function HomePage() {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All Sheets");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("tag") ?? "";
+  const category = searchParams.get("category") ?? "All Sheets";
   const [sort, setSort] = useState<SortMode>("artist");
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const filteredSheets = sortSheets(searchSheets(filterByCategory(sheets, category, favorites), query), sort);
+
+  function setQuery(value: string) {
+    updateFilters({ query: value, category });
+  }
+
+  function setCategory(value: string) {
+    updateFilters({ query, category: value });
+  }
+
+  function updateFilters({ query: nextQuery, category: nextCategory }: { query: string; category: string }) {
+    const next = new URLSearchParams();
+    if (nextCategory !== "All Sheets") next.set("category", nextCategory);
+    if (nextQuery) next.set("tag", nextQuery);
+    setSearchParams(next, { replace: true });
+  }
 
   return (
     <section className="min-h-[calc(100dvh-4rem)] bg-background">
@@ -70,6 +86,13 @@ export function HomePage() {
               </div>
               <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-[520px]">
                 <FluidInput icon={<MagnifyingGlassIcon />} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search songs or composers" />
+                {(query || category !== "All Sheets") ? (
+                  <FluidButton variant="outline" size="lg" onClick={() => {
+                    setSearchParams({}, { replace: true });
+                  }}>
+                    Clear
+                  </FluidButton>
+                ) : null}
                 <FluidButton asChild size="lg">
                   <Link to="/converter">
                     <SparkleIcon />
