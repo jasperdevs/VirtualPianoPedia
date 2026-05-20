@@ -120,7 +120,9 @@ type MidiNoteLike = {
   midi: number;
   name: string;
   time: number;
+  ticks: number;
   duration: number;
+  velocity: number;
 };
 
 type ShiftedMidiNote = MidiNoteLike & {
@@ -151,8 +153,12 @@ function fitMidiToVirtualRange(midi: number) {
   return fitted;
 }
 
+function isPercussionTrack(track: { channel?: number; instrument?: { percussion?: boolean; family?: string; name?: string } }) {
+  return track.channel === 9 || track.instrument?.percussion === true || track.instrument?.family === "drums" || /drum|percussion/i.test(track.instrument?.name ?? "");
+}
+
 function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
-  const byKey = new Map<string, { key: string; midi: number; duration: number }>();
+  const byKey = new Map<string, { key: string; midi: number; duration: number; velocity: number }>();
 
   for (const note of notes) {
     const fitted = fitMidiToVirtualRange(note.mappedMidi);
@@ -166,6 +172,7 @@ function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
         key: options.sustain && note.duration > 0.8 ? `${key}-` : key,
         midi: fitted,
         duration: note.duration,
+        velocity: note.velocity,
       });
     }
   }
@@ -174,7 +181,13 @@ function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
   const trimmed = playable.length > maxChordKeys;
 
   if (trimmed) {
-    playable = [...playable.slice(0, 2), ...playable.slice(-4)];
+    const bass = playable.slice(0, 2);
+    const melody = playable
+      .slice(2)
+      .sort((a, b) => b.velocity - a.velocity || b.midi - a.midi)
+      .slice(0, maxChordKeys - bass.length)
+      .sort((a, b) => a.midi - b.midi);
+    playable = [...bass, ...melody];
   }
 
   const keys = playable.map((note) => note.key);
@@ -240,15 +253,19 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
 
   if (isMidi && input instanceof ArrayBuffer) {
     const midi = new Midi(input);
+    const skippedTracks = midi.tracks.filter(isPercussionTrack).length;
     const notes = midi.tracks
+      .filter((track) => !isPercussionTrack(track))
       .flatMap((track) => track.notes)
       .map((note) => ({
         midi: note.midi,
         name: note.name,
         time: note.time,
+        ticks: note.ticks,
         duration: note.duration,
+        velocity: note.velocity,
       }))
-      .sort((a, b) => a.time - b.time || a.midi - b.midi);
+      .sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
 
     noteCount = notes.length;
     const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
@@ -257,6 +274,10 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
 
     if (!notes.length) {
       warnings.push("No MIDI notes were found.");
+    }
+
+    if (skippedTracks) {
+      warnings.push(`Skipped ${skippedTracks} drum/percussion MIDI track${skippedTracks === 1 ? "" : "s"}.`);
     }
 
     const octaveShift = chooseOctaveShift(notes, options.transpose);
@@ -274,14 +295,17 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
       warnings.push(`${foldedCount} notes were outside the playable range and were folded by octave.`);
     }
 
-    const groups: Array<{ time: number; notes: typeof shiftedNotes }> = [];
+    const ppq = Math.max(1, midi.header.ppq || 480);
+    const quantizeTicks = Math.max(1, Math.round(ppq / 12));
+    const groups: Array<{ time: number; ticks: number; notes: typeof shiftedNotes }> = [];
 
     for (const note of shiftedNotes) {
+      const quantizedTicks = Math.round(note.ticks / quantizeTicks) * quantizeTicks;
       const previous = groups.at(-1);
-      if (previous && Math.abs(note.time - previous.time) < 0.035) {
+      if (previous && previous.ticks === quantizedTicks) {
         previous.notes.push(note);
       } else {
-        groups.push({ time: note.time, notes: [note] });
+        groups.push({ time: midi.header.ticksToSeconds(quantizedTicks), ticks: quantizedTicks, notes: [note] });
       }
     }
 

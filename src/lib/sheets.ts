@@ -5,6 +5,9 @@ export type SheetVariant = {
   tier: DifficultyTier;
   fileName: string;
   body: string;
+  tempo?: number;
+  length?: string;
+  transpose?: number;
 };
 
 export type Sheet = {
@@ -18,8 +21,8 @@ export type Sheet = {
   category: string;
   tempo: number;
   length: string;
-  transpose: number;
-  source: string;
+  transpose?: number;
+  source?: string;
   imageUrl?: string;
   imageAlt?: string;
   imageSource?: string;
@@ -67,6 +70,9 @@ for (const [path, mod] of Object.entries(modules)) {
       entry.variants.push({
         tier,
         fileName: `${fileName}.md`,
+        tempo: typeof mod.frontmatter.tempo === "number" ? mod.frontmatter.tempo : undefined,
+        length: typeof mod.frontmatter.length === "string" ? mod.frontmatter.length : undefined,
+        transpose: typeof mod.frontmatter.transpose === "number" ? mod.frontmatter.transpose : undefined,
         body: mod.body.trim(),
       });
     }
@@ -113,6 +119,7 @@ export const categoryNav = [
   "Expert",
   "Classical",
   "Alternative Rock",
+  "New Wave",
 ] as const;
 
 export function getSheet(slug: string) {

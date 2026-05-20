@@ -169,6 +169,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
   Expert: GaugeIcon,
   Classical: PianoKeysIcon,
   "Alternative Rock": MusicNotesIcon,
+  "New Wave": MusicNotesIcon,
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {

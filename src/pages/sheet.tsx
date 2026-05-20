@@ -21,6 +21,9 @@ export function SheetPage() {
   if (!sheet) return <Navigate to="/" replace />;
 
   const activeVariant = sheet.variants[variantIndex] ?? sheet.variants[0];
+  const activeLength = activeVariant.length ?? sheet.length;
+  const activeTempo = activeVariant.tempo ?? sheet.tempo;
+  const activeTranspose = activeVariant.transpose ?? sheet.transpose;
   const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}/${activeVariant.fileName}`;
 
   return (
@@ -83,10 +86,10 @@ export function SheetPage() {
                   {isFavorite(sheet.slug) ? "Saved" : "Save"}
                 </FluidButton>
                 <div className="my-3 space-y-1 rounded-xl bg-background/45 p-2 ring-1 ring-border/45">
-                  <Info icon={<GaugeIcon />} label="Level" value={sheet.difficulty} />
-                  <Info icon={<MetronomeIcon />} label="Target length" value={sheet.length} />
-                  <Info icon={<MetronomeIcon />} label="Tempo" value={`${sheet.tempo} bpm`} />
-                  <Info icon={<MusicNoteIcon />} label="Transpose" value={String(sheet.transpose)} />
+                  <Info icon={<GaugeIcon />} label="Level" value={activeVariant.tier} />
+                  {activeLength ? <Info icon={<MetronomeIcon />} label="Target length" value={activeLength} /> : null}
+                  {activeTempo ? <Info icon={<MetronomeIcon />} label="Tempo" value={`${activeTempo} bpm`} /> : null}
+                  {activeTranspose !== undefined ? <Info icon={<MusicNoteIcon />} label="Transpose" value={String(activeTranspose)} /> : null}
                 </div>
                 <FluidButton asChild className="w-full">
                   <a href={rawUrl} target="_blank" rel="noreferrer">

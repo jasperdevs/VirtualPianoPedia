@@ -143,19 +143,24 @@ function main() {
 
 function convertMidi(inputBuffer, options) {
   const midi = new Midi(inputBuffer);
+  const skippedTracks = midi.tracks.filter(isPercussionTrack).length;
   const notes = midi.tracks
+    .filter((track) => !isPercussionTrack(track))
     .flatMap((track) => track.notes)
     .map((note) => ({
       midi: note.midi,
       time: note.time,
+      ticks: note.ticks,
       duration: note.duration,
+      velocity: note.velocity,
     }))
-    .sort((a, b) => a.time - b.time || a.midi - b.midi);
+    .sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
   const warnings = [];
   const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
   const tempo = Math.round(midi.header.tempos[0]?.bpm ?? 100);
 
   if (!notes.length) warnings.push("No MIDI notes were found.");
+  if (skippedTracks) warnings.push(`Skipped ${skippedTracks} drum/percussion MIDI track${skippedTracks === 1 ? "" : "s"}.`);
 
   const octaveShift = chooseOctaveShift(notes, options.transpose);
   const shiftedNotes = notes.map((note) => ({ ...note, mappedMidi: note.midi + options.transpose + octaveShift }));
@@ -169,13 +174,16 @@ function convertMidi(inputBuffer, options) {
     warnings.push(`${foldedCount} notes were outside the playable range and were folded by octave.`);
   }
 
+  const ppq = Math.max(1, midi.header.ppq || 480);
+  const quantizeTicks = Math.max(1, Math.round(ppq / 12));
   const groups = [];
   for (const note of shiftedNotes) {
+    const quantizedTicks = Math.round(note.ticks / quantizeTicks) * quantizeTicks;
     const previous = groups.at(-1);
-    if (previous && Math.abs(note.time - previous.time) < 0.035) {
+    if (previous && previous.ticks === quantizedTicks) {
       previous.notes.push(note);
     } else {
-      groups.push({ time: note.time, notes: [note] });
+      groups.push({ time: midi.header.ticksToSeconds(quantizedTicks), ticks: quantizedTicks, notes: [note] });
     }
   }
 
@@ -236,6 +244,7 @@ function renderMidiGroup(notes, options) {
         key: options.sustain && note.duration > 0.8 ? `${key}-` : key,
         midi: fitted,
         duration: note.duration,
+        velocity: note.velocity,
       });
     }
   }
@@ -244,7 +253,13 @@ function renderMidiGroup(notes, options) {
   const trimmed = playable.length > maxChordKeys;
 
   if (trimmed) {
-    playable = [...playable.slice(0, 2), ...playable.slice(-4)];
+    const bass = playable.slice(0, 2);
+    const melody = playable
+      .slice(2)
+      .sort((a, b) => b.velocity - a.velocity || b.midi - a.midi)
+      .slice(0, maxChordKeys - bass.length)
+      .sort((a, b) => a.midi - b.midi);
+    playable = [...bass, ...melody];
   }
 
   const keys = playable.map((note) => note.key);
@@ -252,6 +267,10 @@ function renderMidiGroup(notes, options) {
     text: options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "),
     trimmed,
   };
+}
+
+function isPercussionTrack(track) {
+  return track.channel === 9 || track.instrument?.percussion === true || track.instrument?.family === "drums" || /drum|percussion/i.test(track.instrument?.name ?? "");
 }
 
 function chooseOctaveShift(notes, transpose) {
