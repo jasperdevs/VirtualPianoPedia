@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95">
+      <header className="sticky top-0 z-40 bg-background/95">
         <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 md:flex-nowrap">
           <Link to="/" className="flex items-center gap-3">
             <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="size-9 rounded-md" />
@@ -70,7 +70,7 @@ export default function App() {
         </Routes>
       </main>
 
-      <footer className="border-t border-border/70 bg-muted/20">
+      <footer className="bg-muted/20">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
           <div className="font-medium text-foreground">VirtualPianoPedia</div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
