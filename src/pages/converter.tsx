@@ -18,6 +18,7 @@ export function ConverterPage() {
   const [includeTiming, setIncludeTiming] = useState(false);
   const [fileName, setFileName] = useState("converted-sheet.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
+  const [artistFolder, setArtistFolder] = useState("unknown");
   const [folderSlug, setFolderSlug] = useState("");
   const [variantFile, setVariantFile] = useState("normal.md");
   const [metaMarkdown, setMetaMarkdown] = useState("");
@@ -26,10 +27,11 @@ export function ConverterPage() {
 
   const editedMarkdown = useMemo(() => {
     if (!result) return "";
+    const safeArtist = artistFolder.trim() || "unknown";
     const safeFolder = folderSlug.trim() || result.folderSlug;
     const safeVariantFile = variantFile.trim() || "normal.md";
-    return `# src/content/sheets/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeFolder}/${safeVariantFile}\n\n${variantMarkdown.trimEnd()}\n`;
-  }, [folderSlug, metaMarkdown, result, variantFile, variantMarkdown]);
+    return `# src/content/sheets/${safeArtist}/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeArtist}/${safeFolder}/${safeVariantFile}\n\n${variantMarkdown.trimEnd()}\n`;
+  }, [artistFolder, folderSlug, metaMarkdown, result, variantFile, variantMarkdown]);
 
   const editedNoteCount = useMemo(() => variantMarkdown.split(/\s+/).filter(Boolean).length, [variantMarkdown]);
 
@@ -38,6 +40,7 @@ export function ConverterPage() {
     try {
       const converted = await convertInput(input, name, { transpose, sustain, groupChords, includeTiming });
       setResult(converted);
+      setArtistFolder("unknown");
       setFolderSlug(converted.folderSlug);
       setVariantFile("normal.md");
       setMetaMarkdown(converted.metaMarkdown);
@@ -63,8 +66,7 @@ export function ConverterPage() {
     <section className="min-h-[calc(100dvh-4rem)] bg-background px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[1180px] min-w-0">
         <div className="border-b border-border/70 pb-5">
-          <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Tool</div>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Converter</h1>
+          <h1 className="text-3xl font-semibold sm:text-4xl">Converter</h1>
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI or paste notes, then edit and copy the GitHub files</p>
         </div>
 
@@ -120,7 +122,7 @@ export function ConverterPage() {
               <div className="space-y-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold tracking-tight">{result.title}</h2>
+                    <h2 className="text-xl font-semibold">{result.title}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {editedNoteCount} notes · {result.duration}
                     </p>
@@ -134,8 +136,11 @@ export function ConverterPage() {
                   </div>
                 </div>
                 <div className="grid gap-3">
-                  <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
-                    <Field label="Folder">
+                  <div className="grid gap-3 sm:grid-cols-[1fr_1fr_160px]">
+                    <Field label="Artist folder">
+                      <FluidInput value={artistFolder} onChange={(event) => setArtistFolder(slugify(event.target.value))} />
+                    </Field>
+                    <Field label="Song folder">
                       <FluidInput value={folderSlug} onChange={(event) => setFolderSlug(event.target.value)} />
                     </Field>
                     <Field label="Sheet file">
@@ -150,7 +155,7 @@ export function ConverterPage() {
                   </Field>
                 </div>
                 <FluidButton asChild className="w-full">
-                  <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
+                  <a href={`https://github.com/jasperdevs/VirtualPianoPedia/new/main/src/content/sheets/${encodeURIComponent(artistFolder || "unknown")}/${encodeURIComponent(folderSlug || result.folderSlug)}?filename=_meta.md`} target="_blank" rel="noreferrer">
                     <GithubLogoIcon />
                     Create folder on GitHub
                     <ArrowUpRightIcon />
@@ -160,7 +165,7 @@ export function ConverterPage() {
             ) : (
               <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
                 <MagicWandIcon className="mb-5 size-12 text-muted-foreground" />
-                <h2 className="text-2xl font-semibold tracking-tight">No sheet yet</h2>
+                <h2 className="text-2xl font-semibold">No sheet yet</h2>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to edit the output</p>
               </div>
             )}
@@ -178,4 +183,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </label>
   );
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }

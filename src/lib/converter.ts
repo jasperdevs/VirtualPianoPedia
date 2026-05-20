@@ -114,7 +114,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
   const folderSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "converted-sheet";
   const metaMarkdown = `---\ntitle: ${title}\nartist: Unknown\ngame: Roblox Virtual Piano\ncategory: Pop\ntempo: 100\nlength: "${duration}"\ntranspose: ${options.transpose}\nsource: Converter submission\ntags:\n  - submission\n---\n`;
   const variantMarkdown = `${sheet}\n`;
-  const markdown = `# src/content/sheets/${folderSlug}/_meta.md\n\n${metaMarkdown}\n# src/content/sheets/${folderSlug}/normal.md\n\n${variantMarkdown}`;
+  const markdown = `# src/content/sheets/unknown/${folderSlug}/_meta.md\n\n${metaMarkdown}\n# src/content/sheets/unknown/${folderSlug}/normal.md\n\n${variantMarkdown}`;
 
   return { title, sheet, markdown, metaMarkdown, variantMarkdown, folderSlug, noteCount, duration };
 }

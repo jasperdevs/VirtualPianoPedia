@@ -8,13 +8,13 @@ const variants = ["easy", "normal", "hard", "expert"];
 const start = "<!-- SONG_INDEX_START -->";
 const end = "<!-- SONG_INDEX_END -->";
 
-function readMeta(slug) {
-  const metaPath = path.join(sheetsDir, slug, "_meta.md");
-  if (!fs.existsSync(metaPath)) return { title: slug, artist: "Unknown" };
+function readMeta(artistSlug, songSlug) {
+  const metaPath = path.join(sheetsDir, artistSlug, songSlug, "_meta.md");
+  if (!fs.existsSync(metaPath)) return { title: songSlug, artist: artistSlug };
 
   const raw = fs.readFileSync(metaPath, "utf8");
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!match) return { title: slug, artist: "Unknown" };
+  if (!match) return { title: songSlug, artist: artistSlug };
 
   const meta = {};
   for (const line of match[1].split(/\r?\n/)) {
@@ -22,7 +22,7 @@ function readMeta(slug) {
     if (field) meta[field[1]] = field[2];
   }
   return {
-    title: meta.title || slug,
+    title: meta.title || songSlug,
     artist: meta.artist || "Unknown",
   };
 }
@@ -34,20 +34,27 @@ function titleCase(value) {
 const songs = fs
   .readdirSync(sheetsDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
-  .map((entry) => {
-    const slug = entry.name;
-    const meta = readMeta(slug);
-    const available = variants.filter((variant) => fs.existsSync(path.join(sheetsDir, slug, `${variant}.md`)));
-    return { slug, ...meta, variants: available };
+  .flatMap((artistEntry) => {
+    const artistSlug = artistEntry.name;
+    const artistDir = path.join(sheetsDir, artistSlug);
+    return fs
+      .readdirSync(artistDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((songEntry) => {
+        const songSlug = songEntry.name;
+        const meta = readMeta(artistSlug, songSlug);
+        const available = variants.filter((variant) => fs.existsSync(path.join(sheetsDir, artistSlug, songSlug, `${variant}.md`)));
+        return { artistSlug, songSlug, ...meta, variants: available };
+      });
   })
   .filter((song) => song.variants.length)
-  .sort((a, b) => a.title.localeCompare(b.title));
+  .sort((a, b) => a.artist.localeCompare(b.artist) || a.title.localeCompare(b.title));
 
 const rows = songs.map((song) => {
   const versionLinks = song.variants
-    .map((variant) => `[${titleCase(variant)}](./src/content/sheets/${song.slug}/${variant}.md)`)
+    .map((variant) => `[${titleCase(variant)}](./src/content/sheets/${song.artistSlug}/${song.songSlug}/${variant}.md)`)
     .join(", ");
-  return `| ${song.title} | ${song.artist} | ${versionLinks} | [folder](./src/content/sheets/${song.slug}/) |`;
+  return `| ${song.artist} | ${song.title} | ${versionLinks} | [folder](./src/content/sheets/${song.artistSlug}/${song.songSlug}/) |`;
 });
 
 const index = [
@@ -55,7 +62,7 @@ const index = [
   "",
   "## Song Index",
   "",
-  "| Song | Artist | Versions | Folder |",
+  "| Artist | Song | Versions | Folder |",
   "| --- | --- | --- | --- |",
   ...rows,
   "",

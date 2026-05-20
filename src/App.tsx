@@ -4,6 +4,7 @@ import { GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, SparkleIcon, SunIcon } f
 import { FluidButton } from "@/components/fluid/FluidButton";
 import { HomePage } from "@/pages/home";
 import { SheetPage } from "@/pages/sheet";
+import { ArtistPage } from "@/pages/artist";
 import { ConverterPage } from "@/pages/converter";
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -24,14 +25,14 @@ export default function App() {
           <Link to="/" className="flex items-center gap-3">
             <img src="/VirtualPianoPedia/assets/rvps-logo.png" alt="" className="size-9 rounded-md" />
             <div>
-              <div className="text-base font-semibold leading-none tracking-tight">VirtualPianoPedia</div>
+              <div className="text-base font-semibold leading-none">VirtualPianoPedia</div>
               <div className="text-xs text-muted-foreground">Roblox piano sheets</div>
             </div>
           </Link>
 
           <nav className="order-3 mx-auto flex items-center rounded-full bg-muted/80 p-1 md:order-none md:mx-0">
             {navItems.map((item) => {
-              const isActive = item.href === "/" ? location.pathname === "/" || location.pathname.startsWith("/sheet") : location.pathname.startsWith(item.href);
+              const isActive = item.href === "/" ? location.pathname === "/" || location.pathname.startsWith("/sheet") || location.pathname.startsWith("/artist") : location.pathname.startsWith(item.href);
 
               return (
                 <Link
@@ -63,7 +64,8 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/sheet/:slug" element={<SheetPage />} />
+          <Route path="/sheet/*" element={<SheetPage />} />
+          <Route path="/artist/:artistSlug" element={<ArtistPage />} />
           <Route path="/converter" element={<ConverterPage />} />
         </Routes>
       </main>

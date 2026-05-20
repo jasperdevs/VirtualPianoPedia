@@ -20,14 +20,14 @@ import { useFavorites } from "@/lib/favorites";
 import { categoryNav, filterByCategory, getCategoryCount, searchSheets, sheets, sortSheets, tierClass, type Sheet } from "@/lib/sheets";
 import { cn } from "@/lib/utils";
 
-type SortMode = "hot" | "az" | "length";
+type SortMode = "artist" | "song" | "length";
 
 const quickSearches = ["max richter", "debussy", "classical", "hard"];
 
 export function HomePage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All Sheets");
-  const [sort, setSort] = useState<SortMode>("hot");
+  const [sort, setSort] = useState<SortMode>("artist");
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
   const filteredSheets = sortSheets(searchSheets(filterByCategory(sheets, category, favorites), query), sort);
 
@@ -61,11 +61,10 @@ export function HomePage() {
         </aside>
 
         <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto w-full max-w-[960px] min-w-0">
+          <div className="mx-auto w-full max-w-[1180px] min-w-0">
             <div className="flex flex-col gap-5 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="min-w-0">
-                <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Library</div>
-                <h1 className="max-w-full break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Sheets</h1>
+                <h1 className="max-w-full break-words text-3xl font-semibold leading-tight sm:text-4xl">Sheets</h1>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Find a song, pick a level, and open the sheet.</p>
               </div>
               <div className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-[520px]">
@@ -102,12 +101,12 @@ export function HomePage() {
               <div className="flex flex-col gap-4 border-b border-border/60 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold tracking-tight">{category}</h2>
+                    <h2 className="text-2xl font-semibold">{category}</h2>
                     <FluidBadge color="white">{filteredSheets.length} songs</FluidBadge>
                   </div>
                   <p className="mt-1.5 text-sm text-muted-foreground">One folder per song, with only the versions that exist.</p>
                 </div>
-                <FluidTabs items={["hot", "az", "length"] as SortMode[]} value={sort} onChange={setSort} />
+                <FluidTabs items={["artist", "song", "length"] as SortMode[]} value={sort} onChange={setSort} />
               </div>
 
               {filteredSheets.length ? (
@@ -121,7 +120,7 @@ export function HomePage() {
               ) : (
                 <div className="flex min-h-[360px] flex-col items-center justify-center px-6 text-center">
                   <SparkleIcon className="mb-4 size-8 text-muted-foreground" />
-                  <h3 className="text-xl font-semibold tracking-tight">No sheets here yet</h3>
+                  <h3 className="text-xl font-semibold">No sheets here yet</h3>
                   <p className="mt-2 max-w-sm text-sm text-muted-foreground">Convert one, copy the markdown, and open a GitHub pull request</p>
                   <FluidButton asChild className="mt-5">
                     <Link to="/converter">Open converter</Link>
@@ -155,35 +154,37 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
       <motion.button type="button" onClick={onFavorite} whileTap={{ scale: 0.9 }} className="grid size-8 place-items-center rounded-lg transition hover:bg-background" aria-label={isFavorite ? "Remove favorite" : "Add favorite"}>
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
       </motion.button>
-      <Link to={`/sheet/${sheet.slug}`} className="contents text-foreground">
-        <div className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
-          {sheet.title
-            .split(" ")
-            .slice(0, 2)
-            .map((word) => word[0])
-            .join("")}
+      <Link to={`/sheet/${sheet.slug}`} className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
+        {sheet.title
+          .split(" ")
+          .slice(0, 2)
+          .map((word) => word[0])
+          .join("")}
+      </Link>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <Link to={`/sheet/${sheet.slug}`} className="truncate text-base font-semibold text-foreground hover:underline sm:text-lg">
+            {sheet.title}
+          </Link>
         </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{sheet.title}</h3>
-          </div>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-            <span>{sheet.artist}</span>
-            <span className="hidden sm:inline">{sheet.category}</span>
-            <span className="inline-flex items-center gap-1">
-              <ClockIcon className="size-3.5" />
-              {sheet.length}
-            </span>
-          </div>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <Link to={`/artist/${sheet.artistSlug}`} className="hover:text-foreground hover:underline">
+            {sheet.artist}
+          </Link>
+          <span className="hidden sm:inline">{sheet.category}</span>
+          <span className="inline-flex items-center gap-1">
+            <ClockIcon className="size-3.5" />
+            {sheet.length}
+          </span>
         </div>
-        <div className="col-span-3 flex flex-wrap gap-1.5 pl-12 md:col-span-1 md:col-start-4 md:justify-end md:pl-0">
-          {sheet.variants.map((variant) => (
-            <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
-              {variant.tier}
-            </span>
-          ))}
-          <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:block" />
-        </div>
+      </div>
+      <Link to={`/sheet/${sheet.slug}`} className="col-span-3 flex flex-wrap gap-1.5 pl-12 text-foreground md:col-span-1 md:col-start-4 md:justify-end md:pl-0">
+        {sheet.variants.map((variant) => (
+          <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
+            {variant.tier}
+          </span>
+        ))}
+        <ArrowUpRightIcon className="ml-1 hidden size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:block" />
       </Link>
     </motion.div>
   );

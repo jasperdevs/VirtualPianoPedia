@@ -9,6 +9,8 @@ export type SheetVariant = {
 
 export type Sheet = {
   slug: string;
+  artistSlug: string;
+  songSlug: string;
   title: string;
   artist: string;
   game: string;
@@ -23,7 +25,7 @@ export type Sheet = {
   body: string;
 };
 
-type MetaFrontmatter = Omit<Sheet, "slug" | "body" | "variants" | "difficulty">;
+type MetaFrontmatter = Omit<Sheet, "slug" | "artistSlug" | "songSlug" | "body" | "variants" | "difficulty">;
 
 type MarkdownModule = {
   frontmatter: Partial<MetaFrontmatter>;
@@ -43,13 +45,15 @@ const tierByFileName = new Map<string, DifficultyTier>([
   ["expert", "Expert"],
 ]);
 
-const grouped = new Map<string, { meta?: MetaFrontmatter; variants: SheetVariant[] }>();
+const grouped = new Map<string, { artistSlug: string; songSlug: string; meta?: MetaFrontmatter; variants: SheetVariant[] }>();
 
 for (const [path, mod] of Object.entries(modules)) {
   const parts = path.split("/");
   const fileName = parts.pop()?.replace(".md", "") ?? "";
-  const slug = parts.pop() ?? "sheet";
-  const entry = grouped.get(slug) ?? { variants: [] };
+  const songSlug = parts.pop() ?? "sheet";
+  const artistSlug = parts.pop() ?? slugify(String(mod.frontmatter.artist ?? "Unknown"));
+  const slug = `${artistSlug}/${songSlug}`;
+  const entry = grouped.get(slug) ?? { artistSlug, songSlug, variants: [] };
 
   if (fileName === "_meta") {
     entry.meta = mod.frontmatter as MetaFrontmatter;
@@ -84,6 +88,8 @@ export const sheets: Sheet[] = Array.from(grouped.entries())
 
     return {
       slug,
+      artistSlug: entry.artistSlug,
+      songSlug: entry.songSlug,
       ...meta,
       difficulty: sortedVariants[0]?.tier ?? "Normal",
       tags: meta.tags ?? [],
@@ -92,7 +98,7 @@ export const sheets: Sheet[] = Array.from(grouped.entries())
     };
   })
   .filter((sheet) => sheet.variants.length)
-  .sort((a, b) => a.title.localeCompare(b.title));
+  .sort((a, b) => a.artist.localeCompare(b.artist) || a.title.localeCompare(b.title));
 
 export const categoryNav = [
   "All Sheets",
@@ -104,6 +110,10 @@ export const categoryNav = [
 
 export function getSheet(slug: string) {
   return sheets.find((sheet) => sheet.slug === slug);
+}
+
+export function getArtistSheets(artistSlug: string) {
+  return sheets.filter((sheet) => sheet.artistSlug === artistSlug);
 }
 
 export function getCategoryCount(category: string, favorites: string[] = []) {
@@ -126,11 +136,11 @@ export function searchSheets(items: Sheet[], query: string) {
   );
 }
 
-export function sortSheets(items: Sheet[], mode: "hot" | "az" | "length") {
+export function sortSheets(items: Sheet[], mode: "artist" | "song" | "length") {
   return [...items].sort((a, b) => {
-    if (mode === "az") return a.title.localeCompare(b.title);
+    if (mode === "song") return a.title.localeCompare(b.title) || a.artist.localeCompare(b.artist);
     if (mode === "length") return parseLength(a.length) - parseLength(b.length);
-    return b.variants.length - a.variants.length || b.tempo - a.tempo || a.title.localeCompare(b.title);
+    return a.artist.localeCompare(b.artist) || a.title.localeCompare(b.title);
   });
 }
 
@@ -144,4 +154,8 @@ export function tierClass(tier: string) {
 function parseLength(length: string) {
   const [minutes = "0", seconds = "0"] = length.split(":");
   return Number(minutes) * 60 + Number(seconds);
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "unknown";
 }
