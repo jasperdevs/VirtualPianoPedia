@@ -99,6 +99,10 @@ export function SheetPage() {
               style={sheetPanelHeight ? ({ "--song-panel-height": `${sheetPanelHeight}px` } as React.CSSProperties) : undefined}
             >
               <FluidPanel className="flex h-full min-h-0 flex-col overflow-hidden border border-border/70 bg-card p-3">
+                <div className="mb-2 flex shrink-0 items-center justify-between px-1">
+                  <h2 className="text-sm font-semibold">More info</h2>
+                  <span className="text-xs font-medium text-muted-foreground">{activeVariant.tier}</span>
+                </div>
                 {sheet.imageUrl ? (
                   <div className="mb-2 h-14 shrink-0 overflow-hidden rounded-xl bg-muted ring-1 ring-border/45">
                     <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="h-full w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10" />
