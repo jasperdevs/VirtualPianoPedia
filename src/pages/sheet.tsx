@@ -62,12 +62,15 @@ export function SheetPage() {
               ))}
             </div>
 
-            <FluidPanel className="mt-6 overflow-hidden border border-border/70 bg-card">
-              <div className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
-                <FluidBadge>{activeVariant.tier}</FluidBadge>
+            <FluidPanel className="mt-6 overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
+              <div className="flex items-center justify-between gap-3 bg-muted/20 px-5 py-4">
+                <FluidBadge className="bg-background text-foreground ring-1 ring-border/60">{activeVariant.tier}</FluidBadge>
                 <FluidCopy value={activeVariant.body} />
               </div>
-              <pre className="max-h-[760px] overflow-y-auto whitespace-pre-wrap break-words px-5 pb-7 pt-3 font-mono text-sm leading-8 text-foreground sm:text-base">{activeVariant.body}</pre>
+              <div className="relative bg-background/35">
+                <pre className="max-h-[min(66dvh,760px)] overflow-y-auto whitespace-pre-wrap break-words px-5 pb-20 pt-5 font-mono text-[13px] leading-7 text-foreground/90 [tab-size:2] sm:px-6 sm:text-sm">{activeVariant.body}</pre>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card via-card/85 to-transparent" />
+              </div>
             </FluidPanel>
           </div>
 
