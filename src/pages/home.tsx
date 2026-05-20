@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
@@ -144,17 +144,42 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
+  const navigate = useNavigate();
+  const sheetHref = `/sheet/${sheet.slug}`;
+
+  function openSheet() {
+    navigate(sheetHref);
+  }
+
   return (
     <motion.div
-      className="group grid grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/45 md:grid-cols-[32px_60px_minmax(0,1fr)_auto]"
+      role="link"
+      tabIndex={0}
+      onClick={openSheet}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openSheet();
+        }
+      }}
+      className="group grid cursor-pointer grid-cols-[32px_52px_minmax(0,1fr)] items-center gap-4 px-4 py-4 outline-none transition-colors hover:bg-muted/45 focus-visible:bg-muted/45 md:grid-cols-[32px_60px_minmax(0,1fr)_auto]"
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.995 }}
       transition={{ type: "spring", stiffness: 520, damping: 38 }}
     >
-      <motion.button type="button" onClick={onFavorite} whileTap={{ scale: 0.9 }} className="grid size-8 place-items-center rounded-lg transition hover:bg-background" aria-label={isFavorite ? "Remove favorite" : "Add favorite"}>
+      <motion.button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          onFavorite();
+        }}
+        whileTap={{ scale: 0.9 }}
+        className="grid size-8 place-items-center rounded-lg transition hover:bg-background"
+        aria-label={isFavorite ? "Remove favorite" : "Add favorite"}
+      >
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
       </motion.button>
-      <Link to={`/sheet/${sheet.slug}`} className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
+      <Link to={sheetHref} onClick={(event) => event.stopPropagation()} className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
         {sheet.title
           .split(" ")
           .slice(0, 2)
@@ -163,12 +188,12 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
       </Link>
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <Link to={`/sheet/${sheet.slug}`} className="truncate text-base font-semibold text-foreground hover:underline sm:text-lg">
+          <Link to={sheetHref} onClick={(event) => event.stopPropagation()} className="truncate text-base font-semibold text-foreground hover:underline sm:text-lg">
             {sheet.title}
           </Link>
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-          <Link to={`/artist/${sheet.artistSlug}`} className="hover:text-foreground hover:underline">
+          <Link to={`/artist/${sheet.artistSlug}`} onClick={(event) => event.stopPropagation()} className="hover:text-foreground hover:underline">
             {sheet.artist}
           </Link>
           <span className="hidden sm:inline">{sheet.category}</span>
@@ -178,7 +203,7 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
           </span>
         </div>
       </div>
-      <Link to={`/sheet/${sheet.slug}`} className="col-span-3 flex flex-wrap gap-1.5 pl-12 text-foreground md:col-span-1 md:col-start-4 md:justify-end md:pl-0">
+      <Link to={sheetHref} onClick={(event) => event.stopPropagation()} className="col-span-3 flex flex-wrap gap-1.5 pl-12 text-foreground md:col-span-1 md:col-start-4 md:justify-end md:pl-0">
         {sheet.variants.map((variant) => (
           <span key={variant.tier} className={cn("rounded-md px-2 py-1 text-xs font-medium", tierClass(variant.tier))}>
             {variant.tier}

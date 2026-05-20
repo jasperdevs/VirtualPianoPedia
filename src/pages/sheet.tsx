@@ -9,6 +9,7 @@ import { FluidCopy } from "@/components/fluid/FluidCopy";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { useFavorites } from "@/lib/favorites";
 import { getSheet } from "@/lib/sheets";
+import { cn } from "@/lib/utils";
 
 export function SheetPage() {
   const params = useParams();
@@ -43,9 +44,11 @@ export function SheetPage() {
             </div>
 
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.98] sm:text-5xl">{sheet.title}</h1>
-            <Link to={`/artist/${sheet.artistSlug}`} className="mt-2 inline-flex text-lg text-muted-foreground hover:text-foreground hover:underline">
-              {sheet.artist}
-            </Link>
+            <div className="mt-3">
+              <Link to={`/artist/${sheet.artistSlug}`} className="inline-flex text-lg text-muted-foreground hover:text-foreground hover:underline">
+                {sheet.artist}
+              </Link>
+            </div>
 
             <div className="mt-6 inline-flex flex-wrap rounded-full bg-muted/70 p-1">
               {sheet.variants.map((variant, index) => (
@@ -63,7 +66,7 @@ export function SheetPage() {
                 <FluidCopy value={activeVariant.body} />
               </div>
               <div className="relative bg-background/35">
-                <pre className="max-h-[min(66dvh,760px)] overflow-y-auto whitespace-pre-wrap break-words px-5 pb-8 pt-5 font-mono text-[13px] leading-7 text-foreground/90 [tab-size:2] sm:px-6 sm:text-sm">{activeVariant.body}</pre>
+                <SheetNotation body={activeVariant.body} />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card via-card/80 to-transparent" />
               </div>
             </FluidPanel>
@@ -91,6 +94,41 @@ export function SheetPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+function SheetNotation({ body }: { body: string }) {
+  const lines = body.split(/\r?\n/);
+
+  return (
+    <div className="max-h-[min(66dvh,760px)] overflow-y-auto px-5 pb-8 pt-5 font-mono text-[13px] leading-7 text-foreground/90 sm:px-6 sm:text-sm">
+      {lines.map((line, lineIndex) => {
+        const tokens = line.trim().split(/\s+/).filter(Boolean);
+
+        if (!tokens.length) return <div key={lineIndex} className="h-4" />;
+
+        return (
+          <div key={lineIndex} className="flex flex-wrap items-center gap-x-1.5 gap-y-2 py-0.5">
+            {tokens.map((token, tokenIndex) => (
+              <span key={`${lineIndex}-${tokenIndex}-${token}`} className={notationTokenClass(token)}>
+                {token}
+              </span>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function notationTokenClass(token: string) {
+  return cn(
+    "inline-flex min-h-6 items-center rounded-md px-1 font-mono tabular-nums",
+    /^\[[^\]]+\]$/.test(token) && "bg-muted px-1.5 text-foreground ring-1 ring-border/50",
+    /^\([^)]+\)$/.test(token) && "bg-muted/45 px-1.5 text-muted-foreground",
+    token === "|" && "px-0 text-muted-foreground/60",
+    token.includes("-") && token !== "|" && "text-amber-300",
+    !/^\[[^\]]+\]$/.test(token) && !/^\([^)]+\)$/.test(token) && token !== "|" && !token.includes("-") && "text-foreground/90",
   );
 }
 
