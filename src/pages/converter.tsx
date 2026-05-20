@@ -218,6 +218,20 @@ export function ConverterPage() {
                       <FluidInput value={meta.tags.join(", ")} onChange={(event) => updateMeta("tags", event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean))} />
                     </Field>
                   </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <Field label="Image URL">
+                      <FluidInput value={meta.imageUrl ?? ""} onChange={(event) => updateMeta("imageUrl", event.target.value || undefined)} placeholder="/VirtualPianoPedia/assets/songs/song.jpg" />
+                    </Field>
+                    <Field label="Image alt text">
+                      <FluidInput value={meta.imageAlt ?? ""} onChange={(event) => updateMeta("imageAlt", event.target.value || undefined)} placeholder="Album cover for Song Title" />
+                    </Field>
+                    <Field label="Image source">
+                      <FluidInput value={meta.imageSource ?? ""} onChange={(event) => updateMeta("imageSource", event.target.value || undefined)} placeholder="https://example.com/source" />
+                    </Field>
+                    <Field label="Image credit">
+                      <FluidInput value={meta.imageCredit ?? ""} onChange={(event) => updateMeta("imageCredit", event.target.value || undefined)} placeholder="Artist, license" />
+                    </Field>
+                  </div>
                 </Section>
 
                 <Section title="Sheet text" right={<FluidTabs items={[...difficultyTiers]} value={variantTier} onChange={setVariantTier} />}>

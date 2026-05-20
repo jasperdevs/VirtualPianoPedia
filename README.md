@@ -81,6 +81,10 @@ Useful options:
 --transpose 0
 --tempo 120
 --length 01:30
+--image-url /VirtualPianoPedia/assets/songs/song.jpg
+--image-alt "Album cover for Song Title"
+--image-source "https://example.com/source"
+--image-credit "Artist name, license"
 --tags classical,piano
 --arrangement balanced
 --grid 24

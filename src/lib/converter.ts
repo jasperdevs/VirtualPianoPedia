@@ -106,6 +106,10 @@ export type ConversionMeta = {
   length: string;
   transpose: number;
   source: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  imageSource?: string;
+  imageCredit?: string;
   tags: string[];
 };
 
@@ -467,8 +471,18 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
 
 export function createMetaMarkdown(meta: ConversionMeta) {
   const tags = meta.tags.map((tag) => tag.trim()).filter(Boolean);
+  const imageFields = [
+    ["imageUrl", meta.imageUrl],
+    ["imageAlt", meta.imageAlt],
+    ["imageSource", meta.imageSource],
+    ["imageCredit", meta.imageCredit],
+  ]
+    .filter(([, value]) => value)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n");
+  const optionalImageBlock = imageFields ? `${imageFields}\n` : "";
 
-  return `---\ntitle: ${meta.title || "Untitled Sheet"}\nartist: ${meta.artist || "Unknown"}\ngame: ${meta.game || "Roblox Virtual Piano"}\ncategory: ${meta.category || "Pop"}\ntempo: ${Number(meta.tempo) || 100}\nlength: "${meta.length || "00:00"}"\ntranspose: ${Number(meta.transpose) || 0}\nsource: ${meta.source || "Converter submission"}\ntags:\n${tags.length ? tags.map((tag) => `  - ${tag}`).join("\n") : "  - submission"}\n---\n`;
+  return `---\ntitle: ${meta.title || "Untitled Sheet"}\nartist: ${meta.artist || "Unknown"}\ngame: ${meta.game || "Roblox Virtual Piano"}\ncategory: ${meta.category || "Pop"}\ntempo: ${Number(meta.tempo) || 100}\nlength: "${meta.length || "00:00"}"\ntranspose: ${Number(meta.transpose) || 0}\nsource: ${meta.source || "Converter submission"}\n${optionalImageBlock}tags:\n${tags.length ? tags.map((tag) => `  - ${tag}`).join("\n") : "  - submission"}\n---\n`;
 }
 
 function extractSheetBody(input: string) {

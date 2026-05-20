@@ -120,6 +120,10 @@ function main() {
     length: args.length ?? result.duration,
     transpose: numberArg(args.transpose, 0),
     source: args.source ?? `Converted from ${path.basename(args.input)}`,
+    imageUrl: optionalString(args.imageUrl),
+    imageAlt: optionalString(args.imageAlt),
+    imageSource: optionalString(args.imageSource),
+    imageCredit: optionalString(args.imageCredit),
     tags: listArg(args.tags),
   };
 
@@ -381,7 +385,18 @@ function fitMidiToVirtualRange(midi) {
 
 function createMetaMarkdown(meta) {
   const tags = meta.tags.map((tag) => tag.trim()).filter(Boolean);
-  return `---\ntitle: ${meta.title}\nartist: ${meta.artist}\ngame: ${meta.game}\ncategory: ${meta.category}\ntempo: ${meta.tempo}\nlength: "${meta.length}"\ntranspose: ${meta.transpose}\nsource: ${meta.source}\ntags:\n${tags.length ? tags.map((tag) => `  - ${tag}`).join("\n") : "  - converted"}\n---\n`;
+  const imageFields = [
+    ["imageUrl", meta.imageUrl],
+    ["imageAlt", meta.imageAlt],
+    ["imageSource", meta.imageSource],
+    ["imageCredit", meta.imageCredit],
+  ]
+    .filter(([, value]) => value)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n");
+  const optionalImageBlock = imageFields ? `${imageFields}\n` : "";
+
+  return `---\ntitle: ${meta.title}\nartist: ${meta.artist}\ngame: ${meta.game}\ncategory: ${meta.category}\ntempo: ${meta.tempo}\nlength: "${meta.length}"\ntranspose: ${meta.transpose}\nsource: ${meta.source}\n${optionalImageBlock}tags:\n${tags.length ? tags.map((tag) => `  - ${tag}`).join("\n") : "  - converted"}\n---\n`;
 }
 
 function parseArgs(rawArgs) {
@@ -423,6 +438,10 @@ Options:
   --length 01:30
   --transpose 0
   --source URL-or-note
+  --image-url URL-or-repo-path
+  --image-alt "Cover art alt text"
+  --image-source URL
+  --image-credit "Artist or license"
   --tags classical,piano
   --arrangement balanced|melody|full
   --grid 24
@@ -439,6 +458,11 @@ function listArg(value) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function optionalString(value) {
+  const trimmed = String(value ?? "").trim();
+  return trimmed || undefined;
 }
 
 function numberArg(value, fallback) {

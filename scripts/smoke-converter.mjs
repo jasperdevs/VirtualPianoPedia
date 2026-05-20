@@ -12,13 +12,28 @@ const inputPath = path.join(tmpDir, "smoke.mid");
 try {
   createFixtureMidi(inputPath);
 
-  const full = runConverter("full", ["--arrangement", "full"]);
+  const full = runConverter("full", [
+    "--arrangement",
+    "full",
+    "--image-url",
+    "/VirtualPianoPedia/assets/songs/smoke-test.jpg",
+    "--image-alt",
+    "Smoke Test cover art",
+    "--image-source",
+    "https://example.com/smoke-test",
+    "--image-credit",
+    "Example Artist, CC0",
+  ]);
   const balanced = runConverter("balanced", ["--arrangement", "balanced"]);
   const melody = runConverter("melody", ["--arrangement", "melody"]);
   const capped = runConverter("capped", ["--arrangement", "full", "--max-chord", "3", "--grid", "12"]);
 
   assert(full.meta.includes("tempo: 120"), "tempo was not read from MIDI");
   assert(full.meta.includes('length: "00:05"'), "length was not calculated from MIDI");
+  assert(full.meta.includes("imageUrl: /VirtualPianoPedia/assets/songs/smoke-test.jpg"), "imageUrl was not written");
+  assert(full.meta.includes("imageAlt: Smoke Test cover art"), "imageAlt was not written");
+  assert(full.meta.includes("imageSource: https://example.com/smoke-test"), "imageSource was not written");
+  assert(full.meta.includes("imageCredit: Example Artist, CC0"), "imageCredit was not written");
   assert(full.sheet.includes("1"), "C2 did not map to 1");
   assert(full.sheet.includes("!"), "C#2 did not map to !");
   assert(full.sheet.includes("t"), "C4 did not map to t");

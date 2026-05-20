@@ -42,6 +42,11 @@ for (const artistEntry of fs.readdirSync(sheetsDir, { withFileTypes: true })) {
 
     if (fields.tempo && !/^\d+$/.test(fields.tempo)) errors.push(`${rel}/_meta.md tempo must be a number`);
     if (fields.length && !/^\d{2}:\d{2}$/.test(fields.length)) errors.push(`${rel}/_meta.md length must look like "01:51"`);
+    if (fields.imageUrl) {
+      for (const field of ["imageAlt", "imageSource", "imageCredit"]) {
+        if (!fields[field]) errors.push(`${rel}/_meta.md imageUrl requires ${field}`);
+      }
+    }
     if (!variants.some((variant) => fs.existsSync(path.join(songDir, variant)))) errors.push(`${rel} needs at least one variant file`);
   }
 }
