@@ -186,6 +186,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
   "Alternative Rock": MusicNotesIcon,
   "New Wave": MusicNotesIcon,
   Synthpop: MusicNotesIcon,
+  Synthwave: MusicNotesIcon,
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
