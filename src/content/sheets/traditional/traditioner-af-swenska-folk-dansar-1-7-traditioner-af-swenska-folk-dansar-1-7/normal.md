@@ -1,8 +1,0 @@
-[5wo] [5wp] [5wP] [5wp] [5wo] [5wp] [5woP] [5wps] [5wPd] [5wP] s [4qd] [@(D] [29g] h [5wg]
-D [6euS] [2-9-y-d-]
-[5wo] [5wp] [5wP] [5wp] [5wo] [5wp] [5woP] [5wps] [5wPd] [5wP] s [4qd] [@(D] [29g] h [5wg]
-D [6euS] [2-9-y-d-]
-[Ei-d] [tD] [yg] [tD] [ei-s] [tD] [Ed] [yP] [qPd] [(sD] [9dg] [(sD] [qps] [sD] [^Pd] [5P]
-[6s] [^d] D d P [(o] ( [8P] p [9tI] [5-w-E-o-]
-[Ei-d] [tD] [yg] [tD] [ei-s] [tD] [Ed] [yP] [qPd] [(sD] [9dg] [(sD] [qps] [sD] [^Pd] [5P]
-[6s] [^d] D d P [(o] ( [8P] p [9tI] [5-w-E-o-]

@@ -1,6 +1,0 @@
-[eTp] [eTp] O [wup] S [qed] [qed] f [qed] [0ws] [qes] p [wys] P [Eyo] [Eyi]
-o [eTp] [6Tp] [eTp] O [wup] S [wuS] [q-y-d-]
-[0ws] [qes] p [wys] P [Eyo] [e-T-p-]
-[eTp] [eTp] O [wup] S [qed] [qed] f [qed] [0ws] [qes] p [wys] P [Eyo] [Eyi]
-o [eTp] [6Tp] [eTp] O [wup] S [wuS] [q-y-d-]
-[0ws] [qes] p [wys] P [Eyo] [e-T-p-]

@@ -73,6 +73,7 @@ const virtualPianoKeys = [
 
 const firstVirtualPianoMidi = 36;
 const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
+const maxChordKeys = 6;
 const tiers = new Set(["easy", "normal", "hard", "expert"]);
 
 function main() {
@@ -181,6 +182,7 @@ function convertMidi(inputBuffer, options) {
   const lines = [];
   let currentLine = [];
   let previousTime = 0;
+  let trimmedChordCount = 0;
 
   for (const group of groups) {
     const gap = group.time - previousTime;
@@ -192,14 +194,12 @@ function convertMidi(inputBuffer, options) {
 
     if (options.includeTiming && gap > 0.35) currentLine.push(`(${gap.toFixed(1)}s)`);
 
-    const keys = group.notes
-      .map((note) => {
-        const key = midiToVirtualKey(fitMidiToVirtualRange(note.mappedMidi));
-        return key ? (options.sustain && note.duration > 0.8 ? `${key}-` : key) : "";
-      })
-      .filter(Boolean);
+    const rendered = renderMidiGroup(group.notes, options);
 
-    if (keys.length) currentLine.push(options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "));
+    if (rendered.text) {
+      currentLine.push(rendered.text);
+      if (rendered.trimmed) trimmedChordCount += 1;
+    }
 
     if (currentLine.length >= 16) {
       lines.push(currentLine.join(" "));
@@ -210,6 +210,7 @@ function convertMidi(inputBuffer, options) {
   }
 
   if (currentLine.length) lines.push(currentLine.join(" "));
+  if (trimmedChordCount) warnings.push(`Trimmed ${trimmedChordCount} dense MIDI chord${trimmedChordCount === 1 ? "" : "s"} to keep the sheet readable.`);
 
   return {
     sheet: lines.join("\n"),
@@ -217,6 +218,39 @@ function convertMidi(inputBuffer, options) {
     noteCount: notes.length,
     tempo,
     warnings,
+  };
+}
+
+function renderMidiGroup(notes, options) {
+  const byKey = new Map();
+
+  for (const note of notes) {
+    const fitted = fitMidiToVirtualRange(note.mappedMidi);
+    const key = midiToVirtualKey(fitted);
+
+    if (!key) continue;
+
+    const current = byKey.get(key);
+    if (!current || note.duration > current.duration) {
+      byKey.set(key, {
+        key: options.sustain && note.duration > 0.8 ? `${key}-` : key,
+        midi: fitted,
+        duration: note.duration,
+      });
+    }
+  }
+
+  let playable = Array.from(byKey.values()).sort((a, b) => a.midi - b.midi);
+  const trimmed = playable.length > maxChordKeys;
+
+  if (trimmed) {
+    playable = [...playable.slice(0, 2), ...playable.slice(-4)];
+  }
+
+  const keys = playable.map((note) => note.key);
+  return {
+    text: options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "),
+    trimmed,
   };
 }
 

@@ -67,6 +67,7 @@ const virtualPianoKeys = [
 
 const firstVirtualPianoMidi = 36;
 const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
+const maxChordKeys = 6;
 
 const noteNameToSemitone = new Map<string, number>([
   ["C", 0],
@@ -122,6 +123,10 @@ type MidiNoteLike = {
   duration: number;
 };
 
+type ShiftedMidiNote = MidiNoteLike & {
+  mappedMidi: number;
+};
+
 function noteNameToMidi(name: string) {
   const match = /^([A-G]#?)(-?\d+)$/.exec(name);
   if (!match) return undefined;
@@ -144,6 +149,39 @@ function fitMidiToVirtualRange(midi: number) {
   while (fitted > lastVirtualPianoMidi) fitted -= 12;
 
   return fitted;
+}
+
+function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
+  const byKey = new Map<string, { key: string; midi: number; duration: number }>();
+
+  for (const note of notes) {
+    const fitted = fitMidiToVirtualRange(note.mappedMidi);
+    const key = midiToVirtualKey(fitted);
+
+    if (!key) continue;
+
+    const current = byKey.get(key);
+    if (!current || note.duration > current.duration) {
+      byKey.set(key, {
+        key: options.sustain && note.duration > 0.8 ? `${key}-` : key,
+        midi: fitted,
+        duration: note.duration,
+      });
+    }
+  }
+
+  let playable = Array.from(byKey.values()).sort((a, b) => a.midi - b.midi);
+  const trimmed = playable.length > maxChordKeys;
+
+  if (trimmed) {
+    playable = [...playable.slice(0, 2), ...playable.slice(-4)];
+  }
+
+  const keys = playable.map((note) => note.key);
+  return {
+    text: options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "),
+    trimmed,
+  };
 }
 
 function chooseOctaveShift(notes: MidiNoteLike[], transpose: number) {
@@ -250,6 +288,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     const lines: string[] = [];
     let currentLine: string[] = [];
     let previousTime = 0;
+    let trimmedChordCount = 0;
 
     for (const group of groups) {
       const gap = group.time - previousTime;
@@ -263,16 +302,11 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
         currentLine.push(`(${gap.toFixed(1)}s)`);
       }
 
-      const keys = group.notes
-        .map((note) => {
-          const fitted = fitMidiToVirtualRange(note.mappedMidi);
-          const key = midiToVirtualKey(fitted);
-          return key ? (options.sustain && note.duration > 0.8 ? `${key}-` : key) : "";
-        })
-        .filter(Boolean);
+      const rendered = renderMidiGroup(group.notes, options);
 
-      if (keys.length) {
-        currentLine.push(options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "));
+      if (rendered.text) {
+        currentLine.push(rendered.text);
+        if (rendered.trimmed) trimmedChordCount += 1;
       }
 
       if (currentLine.length >= 16) {
@@ -284,6 +318,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     }
 
     if (currentLine.length) lines.push(currentLine.join(" "));
+    if (trimmedChordCount) warnings.push(`Trimmed ${trimmedChordCount} dense MIDI chord${trimmedChordCount === 1 ? "" : "s"} to keep the sheet readable.`);
     sheet = lines.join("\n");
   } else {
     sheet = normalizePlainText(String(input), options);

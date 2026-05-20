@@ -73,6 +73,11 @@ export function SheetPage() {
 
             <aside className="lg:sticky lg:top-24 lg:self-start">
               <FluidPanel className="border border-border/70 bg-card p-3">
+                {sheet.imageUrl ? (
+                  <div className="mb-3 overflow-hidden rounded-xl bg-muted ring-1 ring-border/45">
+                    <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                  </div>
+                ) : null}
                 <FluidButton variant="outline" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
                   <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
                   {isFavorite(sheet.slug) ? "Saved" : "Save"}
@@ -89,6 +94,11 @@ export function SheetPage() {
                     Edit on GitHub
                   </a>
                 </FluidButton>
+                {sheet.imageSource ? (
+                  <a href={sheet.imageSource} target="_blank" rel="noreferrer" className="mt-3 block text-center text-xs text-muted-foreground hover:text-foreground">
+                    Image: {sheet.imageCredit ?? "source"}
+                  </a>
+                ) : null}
               </FluidPanel>
             </aside>
           </div>

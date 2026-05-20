@@ -20,6 +20,10 @@ export type Sheet = {
   length: string;
   transpose: number;
   source: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  imageSource?: string;
+  imageCredit?: string;
   tags: string[];
   variants: SheetVariant[];
   body: string;
@@ -108,12 +112,7 @@ export const categoryNav = [
   "Hard",
   "Expert",
   "Classical",
-  "Baroque",
-  "Romantic",
-  "Ragtime",
-  "Dance",
-  "Folk",
-  "Modern",
+  "Alternative Rock",
 ] as const;
 
 export function getSheet(slug: string) {

@@ -4,10 +4,7 @@ import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
   ArrowUpRightIcon,
-  AtomIcon,
-  FlowerLotusIcon,
   ClockIcon,
-  ConfettiIcon,
   GaugeIcon,
   HeartIcon,
   MagnifyingGlassIcon,
@@ -55,7 +52,7 @@ export function HomePage() {
   return (
     <section className="min-h-[calc(100dvh-4rem)] bg-background">
       <div className="grid min-h-[calc(100dvh-4rem)] w-full min-w-0 md:grid-cols-[260px_1fr]">
-        <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-4 md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:border-b-0 md:border-r">
+        <aside className="min-w-0 bg-muted/20 p-4 md:sticky md:top-16 md:h-[calc(100dvh-4rem)] md:self-start">
           <div className="flex gap-2 overflow-x-auto pb-2 [mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] md:block md:space-y-1 md:overflow-visible md:[mask-image:none]">
             {categoryNav.map((item) => {
               const CategoryIcon = categoryIcons[item] ?? MusicNotesIcon;
@@ -83,7 +80,7 @@ export function HomePage() {
 
         <div className="min-h-[calc(100dvh-4rem)] min-w-0 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto w-full max-w-[1180px] min-w-0">
-            <div className="flex flex-col gap-5 border-b border-border/70 pb-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-5 pb-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="min-w-0">
                 <h1 className="max-w-full break-words text-3xl font-semibold leading-tight sm:text-4xl">Sheets</h1>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Find a song, pick a level, and open the sheet.</p>
@@ -125,8 +122,8 @@ export function HomePage() {
               ))}
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-border/70 bg-card">
-              <div className="flex flex-col gap-4 border-b border-border/60 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="overflow-hidden rounded-2xl bg-card shadow-[0_20px_70px_rgba(0,0,0,0.12)] ring-1 ring-border/45">
+              <div className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-semibold">{category}</h2>
@@ -139,7 +136,7 @@ export function HomePage() {
 
               {filteredSheets.length ? (
                 <div>
-                  <div className="divide-y divide-border/45">
+                  <div>
                     {filteredSheets.map((sheet) => (
                       <SheetRow key={sheet.slug} sheet={sheet} isFavorite={isFavorite(sheet.slug)} onFavorite={() => toggleFavorite(sheet.slug)} />
                     ))}
@@ -171,12 +168,7 @@ const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
   Hard: GaugeIcon,
   Expert: GaugeIcon,
   Classical: PianoKeysIcon,
-  Baroque: FlowerLotusIcon,
-  Romantic: HeartIcon,
-  Ragtime: PianoKeysIcon,
-  Dance: ConfettiIcon,
-  Folk: MusicNotesIcon,
-  Modern: AtomIcon,
+  "Alternative Rock": MusicNotesIcon,
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
@@ -215,13 +207,17 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
       >
         <StarIcon className={cn("size-4", isFavorite ? "fill-foreground text-foreground" : "text-muted-foreground")} weight={isFavorite ? "fill" : "regular"} />
       </motion.button>
-      <Link to={sheetHref} onClick={(event) => event.stopPropagation()} className="grid aspect-square place-items-center rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/70">
-        {sheet.title
-          .split(" ")
-          .slice(0, 2)
-          .map((word) => word[0])
-          .join("")}
-      </Link>
+      <div className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-muted text-sm font-semibold text-foreground ring-1 ring-border/55">
+        {sheet.imageUrl ? (
+          <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="size-full object-cover" />
+        ) : (
+          sheet.title
+            .split(" ")
+            .slice(0, 2)
+            .map((word) => word[0])
+            .join("")
+        )}
+      </div>
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <Link to={sheetHref} onClick={(event) => event.stopPropagation()} className="truncate text-base font-semibold text-foreground hover:underline sm:text-lg">

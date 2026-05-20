@@ -28,7 +28,7 @@ export function ArtistPage() {
         <div className="grid items-start gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
           <FluidPanel className="overflow-hidden bg-card p-4 ring-1 ring-border/60">
             {profile.imageUrl ? (
-              <img src={profile.imageUrl} alt={profile.imageAlt} className="aspect-[4/5] w-full rounded-xl object-cover ring-1 ring-white/10" />
+              <img src={profile.imageUrl} alt={profile.imageAlt} loading="lazy" className="aspect-[4/5] w-full rounded-xl object-cover ring-1 ring-white/10" />
             ) : (
               <div className="grid aspect-[4/5] w-full place-items-center rounded-xl bg-muted text-muted-foreground">
                 <ImageIcon className="size-8" />

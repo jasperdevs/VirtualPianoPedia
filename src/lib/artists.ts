@@ -27,6 +27,15 @@ export const artistProfiles: Record<string, ArtistProfile> = {
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Max_Richter_at_Cadogan_Hall_(portrait).jpg",
     credit: "close to 94, CC BY-SA 2.0",
   },
+  semisonic: {
+    slug: "semisonic",
+    name: "Semisonic",
+    role: "Band",
+    imageUrl: "/VirtualPianoPedia/assets/artists/semisonic.jpg",
+    imageAlt: "Semisonic performing at the Minnesota State Fair",
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Semisonic_at_the_MN_State_Fair.jpg",
+    credit: "Wikimedia Commons, CC BY-SA 4.0",
+  },
 };
 
 export function getArtistProfile(slug: string, fallbackName?: string): ArtistProfile {
