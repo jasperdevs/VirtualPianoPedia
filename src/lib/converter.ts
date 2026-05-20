@@ -1,18 +1,86 @@
 import { Midi } from "@tonejs/midi";
 
-const noteToKey = new Map<string, string>([
-  ["C", "a"],
-  ["C#", "w"],
-  ["D", "s"],
-  ["D#", "e"],
-  ["E", "d"],
-  ["F", "f"],
-  ["F#", "t"],
-  ["G", "g"],
-  ["G#", "y"],
-  ["A", "h"],
-  ["A#", "u"],
-  ["B", "j"],
+const virtualPianoKeys = [
+  "1",
+  "!",
+  "2",
+  "@",
+  "3",
+  "4",
+  "$",
+  "5",
+  "%",
+  "6",
+  "^",
+  "7",
+  "8",
+  "*",
+  "9",
+  "(",
+  "0",
+  "q",
+  "Q",
+  "w",
+  "W",
+  "e",
+  "E",
+  "r",
+  "t",
+  "T",
+  "y",
+  "Y",
+  "u",
+  "i",
+  "I",
+  "o",
+  "O",
+  "p",
+  "P",
+  "a",
+  "s",
+  "S",
+  "d",
+  "D",
+  "f",
+  "g",
+  "G",
+  "h",
+  "H",
+  "j",
+  "J",
+  "k",
+  "l",
+  "L",
+  "z",
+  "Z",
+  "x",
+  "c",
+  "C",
+  "v",
+  "V",
+  "b",
+  "B",
+  "n",
+  "m",
+  "M",
+];
+
+const firstVirtualPianoMidi = 36;
+const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
+
+const noteNameToSemitone = new Map<string, number>([
+  ["C", 0],
+  ["C#", 1],
+  ["D", 2],
+  ["D#", 3],
+  ["E", 4],
+  ["F", 5],
+  ["F#", 6],
+  ["G", 7],
+  ["G#", 8],
+  ["A", 9],
+  ["A#", 10],
+  ["B", 11],
 ]);
 
 export type ConvertOptions = {
@@ -44,23 +112,61 @@ export type ConversionResult = {
   folderSlug: string;
   noteCount: number;
   duration: string;
+  warnings: string[];
 };
 
-function transposeName(name: string, steps: number) {
-  const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+type MidiNoteLike = {
+  midi: number;
+  name: string;
+  time: number;
+  duration: number;
+};
+
+function noteNameToMidi(name: string) {
   const match = /^([A-G]#?)(-?\d+)$/.exec(name);
-  if (!match) return name;
-  const index = names.indexOf(match[1]);
-  if (index === -1) return name;
-  const nextIndex = (index + steps + 120) % 12;
-  return `${names[nextIndex]}${match[2]}`;
+  if (!match) return undefined;
+
+  const semitone = noteNameToSemitone.get(match[1]);
+  if (semitone === undefined) return undefined;
+
+  return (Number(match[2]) + 1) * 12 + semitone;
+}
+
+function midiToVirtualKey(midi: number) {
+  const index = midi - firstVirtualPianoMidi;
+  return virtualPianoKeys[index];
+}
+
+function fitMidiToVirtualRange(midi: number) {
+  let fitted = midi;
+
+  while (fitted < firstVirtualPianoMidi) fitted += 12;
+  while (fitted > lastVirtualPianoMidi) fitted -= 12;
+
+  return fitted;
+}
+
+function chooseOctaveShift(notes: MidiNoteLike[], transpose: number) {
+  const shifts = [-36, -24, -12, 0, 12, 24, 36];
+
+  return shifts
+    .map((shift) => {
+      const playable = notes.filter((note) => {
+        const midi = note.midi + transpose + shift;
+        return midi >= firstVirtualPianoMidi && midi <= lastVirtualPianoMidi;
+      }).length;
+
+      return { shift, playable };
+    })
+    .sort((a, b) => b.playable - a.playable || Math.abs(a.shift) - Math.abs(b.shift))[0].shift;
 }
 
 function noteNameToKey(name: string, transpose: number) {
-  const transposed = transposeName(name, transpose);
-  const pitch = transposed.replace(/-?\d+$/, "");
-  const key = noteToKey.get(pitch);
-  return key ?? pitch.toLowerCase().replace("#", "");
+  const midi = noteNameToMidi(name);
+  if (midi === undefined) return name.toLowerCase().replace("#", "");
+
+  const fitted = fitMidiToVirtualRange(midi + transpose);
+  return midiToVirtualKey(fitted) ?? name.toLowerCase().replace("#", "");
 }
 
 function normalizePlainText(input: string, options: ConvertOptions) {
@@ -88,22 +194,51 @@ function normalizePlainText(input: string, options: ConvertOptions) {
 
 export async function convertInput(input: string | ArrayBuffer, fileName: string, options: ConvertOptions): Promise<ConversionResult> {
   const isMidi = input instanceof ArrayBuffer || /\.midi?$/i.test(fileName);
+  const warnings: string[] = [];
   let sheet = "";
   let noteCount = 0;
   let duration = "00:00";
+  let tempo = 100;
 
   if (isMidi && input instanceof ArrayBuffer) {
     const midi = new Midi(input);
     const notes = midi.tracks
       .flatMap((track) => track.notes)
-      .sort((a, b) => a.time - b.time);
+      .map((note) => ({
+        midi: note.midi,
+        name: note.name,
+        time: note.time,
+        duration: note.duration,
+      }))
+      .sort((a, b) => a.time - b.time || a.midi - b.midi);
+
     noteCount = notes.length;
     const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
     duration = formatDuration(endTime);
+    tempo = Math.round(midi.header.tempos[0]?.bpm ?? 100);
 
-    const groups: Array<{ time: number; notes: typeof notes }> = [];
+    if (!notes.length) {
+      warnings.push("No MIDI notes were found.");
+    }
 
-    for (const note of notes) {
+    const octaveShift = chooseOctaveShift(notes, options.transpose);
+    const shiftedNotes = notes.map((note) => ({
+      ...note,
+      mappedMidi: note.midi + options.transpose + octaveShift,
+    }));
+    const foldedCount = shiftedNotes.filter((note) => note.mappedMidi < firstVirtualPianoMidi || note.mappedMidi > lastVirtualPianoMidi).length;
+
+    if (octaveShift !== 0) {
+      warnings.push(`Auto-shifted MIDI by ${octaveShift / 12} octave${Math.abs(octaveShift) === 12 ? "" : "s"} to fit the Roblox virtual piano range.`);
+    }
+
+    if (foldedCount) {
+      warnings.push(`${foldedCount} notes were outside the playable range and were folded by octave.`);
+    }
+
+    const groups: Array<{ time: number; notes: typeof shiftedNotes }> = [];
+
+    for (const note of shiftedNotes) {
       const previous = groups.at(-1);
       if (previous && Math.abs(note.time - previous.time) < 0.035) {
         previous.notes.push(note);
@@ -119,24 +254,30 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     for (const group of groups) {
       const gap = group.time - previousTime;
 
-      if (gap > 0.55 && currentLine.length) {
+      if (gap > 0.7 && currentLine.length) {
         lines.push(currentLine.join(" "));
         currentLine = [];
       }
 
-      if (options.includeTiming && gap > 0.25) {
+      if (options.includeTiming && gap > 0.35) {
         currentLine.push(`(${gap.toFixed(1)}s)`);
       }
 
-      const keys = group.notes.map((note) => {
-        const key = noteNameToKey(note.name, options.transpose);
-        return options.sustain && note.duration > 0.8 ? `${key}-` : key;
-      });
+      const keys = group.notes
+        .map((note) => {
+          const fitted = fitMidiToVirtualRange(note.mappedMidi);
+          const key = midiToVirtualKey(fitted);
+          return key ? (options.sustain && note.duration > 0.8 ? `${key}-` : key) : "";
+        })
+        .filter(Boolean);
 
-      if (options.groupChords && keys.length > 1) {
-        currentLine.push(`[${keys.join("")}]`);
-      } else {
-        currentLine.push(...keys);
+      if (keys.length) {
+        currentLine.push(options.groupChords && keys.length > 1 ? `[${keys.join("")}]` : keys.join(" "));
+      }
+
+      if (currentLine.length >= 16) {
+        lines.push(currentLine.join(" "));
+        currentLine = [];
       }
 
       previousTime = group.time;
@@ -156,7 +297,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     artist: "Unknown",
     game: "Roblox Virtual Piano",
     category: "Pop",
-    tempo: 100,
+    tempo,
     length: duration,
     transpose: options.transpose,
     source: "Converter submission",
@@ -166,7 +307,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
   const variantMarkdown = `${sheet}\n`;
   const markdown = `# src/content/sheets/unknown/${folderSlug}/_meta.md\n\n${metaMarkdown}\n# src/content/sheets/unknown/${folderSlug}/normal.md\n\n${variantMarkdown}`;
 
-  return { title, sheet, markdown, metaMarkdown, variantMarkdown, meta, folderSlug, noteCount, duration };
+  return { title, sheet, markdown, metaMarkdown, variantMarkdown, meta, folderSlug, noteCount, duration, warnings };
 }
 
 export function createMetaMarkdown(meta: ConversionMeta) {
