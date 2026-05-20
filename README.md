@@ -20,6 +20,7 @@
 | --- | --- | --- | --- | --- | --- |
 | Claude Debussy | Clair de Lune | 05:00 | 80 bpm | [Normal](./src/content/sheets/claude-debussy/clair-de-lune/normal.md) | [folder](./src/content/sheets/claude-debussy/clair-de-lune/) |
 | Max Richter | Written on the Sky | 01:51 | 95 bpm | [Normal](./src/content/sheets/max-richter/written-on-the-sky/normal.md), [Hard](./src/content/sheets/max-richter/written-on-the-sky/hard.md) | [folder](./src/content/sheets/max-richter/written-on-the-sky/) |
+| Q Lazzarus | Goodbye Horses | 03:08 | 125 bpm | [Hard](./src/content/sheets/q-lazzarus/goodbye-horses/hard.md) | [folder](./src/content/sheets/q-lazzarus/goodbye-horses/) |
 | Semisonic | Closing Time | 04:33 | 92 bpm | [Easy](./src/content/sheets/semisonic/closing-time/easy.md), [Hard](./src/content/sheets/semisonic/closing-time/hard.md) | [folder](./src/content/sheets/semisonic/closing-time/) |
 
 <!-- SONG_INDEX_END -->

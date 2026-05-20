@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Goodbye Horses song cover</title>
+  <desc id="desc">A dark synth-pop cover with a horse silhouette and piano keys</desc>
+  <rect width="1200" height="900" fill="#080808"/>
+  <path d="M180 470 C275 330 430 330 528 430 C600 504 694 512 804 468 C896 432 982 450 1040 520 L1040 608 C930 570 850 592 750 635 C620 690 492 650 392 548 C330 485 250 482 180 560 Z" fill="#f8f8f8"/>
+  <circle cx="365" cy="365" r="34" fill="#f8f8f8"/>
+  <path d="M300 385 L230 320 L250 430 Z" fill="#f8f8f8"/>
+  <path d="M360 395 C335 435 330 490 356 545" fill="none" stroke="#080808" stroke-width="16" stroke-linecap="round"/>
+  <rect x="235" y="670" width="730" height="90" rx="14" fill="#f5f5f5"/>
+  <g fill="#070707">
+    <rect x="314" y="670" width="34" height="58"/>
+    <rect x="385" y="670" width="34" height="58"/>
+    <rect x="528" y="670" width="34" height="58"/>
+    <rect x="600" y="670" width="34" height="58"/>
+    <rect x="742" y="670" width="34" height="58"/>
+    <rect x="813" y="670" width="34" height="58"/>
+  </g>
+  <text x="110" y="180" fill="#f8f8f8" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="750">Goodbye Horses</text>
+  <text x="115" y="240" fill="#bdbdbd" font-family="Inter, Arial, sans-serif" font-size="34">Q Lazzarus</text>
+</svg>
