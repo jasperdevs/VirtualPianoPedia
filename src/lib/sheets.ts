@@ -121,6 +121,7 @@ export const categoryNav = [
   "Alternative Rock",
   "New Wave",
   "Synthpop",
+  "Synthwave",
 ] as const;
 
 export function getSheet(slug: string) {

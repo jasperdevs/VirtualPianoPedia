@@ -61,7 +61,7 @@ export function SheetPage() {
 
   return (
     <section className="h-full overflow-hidden bg-background px-4 py-4 sm:px-6 lg:px-8">
-      <div className="mx-auto flex h-full max-w-[1200px] min-h-0 flex-col">
+      <div className="mx-auto flex h-full max-w-[1320px] min-h-0 flex-col">
         <FluidButton asChild variant="ghost" className="-ml-3 mb-3 shrink-0 self-start">
           <Link to="/">
             <ArrowLeftIcon />
@@ -70,7 +70,7 @@ export function SheetPage() {
         </FluidButton>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4">
-          <div className="grid shrink-0 gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end">
+          <div className="grid shrink-0 gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap gap-2">
                 <TagLink to={`/?category=${encodeURIComponent(sheet.category)}`} label={sheet.category} primary />
@@ -95,9 +95,9 @@ export function SheetPage() {
             </div>
           </div>
 
-          <div className="grid min-h-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="grid min-h-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div ref={sheetPanelRef} className="min-w-0 self-start">
-              <FluidPanel className="flex max-h-[calc(100dvh-20rem)] min-h-[18rem] flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
+              <FluidPanel className="flex max-h-[calc(100dvh-20rem)] min-h-[22rem] flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
                 <div className="flex shrink-0 items-center justify-between gap-3 bg-muted/20 px-5 py-3">
                   <FluidBadge className="bg-background text-foreground ring-1 ring-border/60">{activeVariant.tier}</FluidBadge>
                   <FluidCopy value={activeVariant.body} />
@@ -110,20 +110,20 @@ export function SheetPage() {
             </div>
 
             <aside
-              className="min-h-0 lg:h-[var(--song-panel-height)] lg:self-start"
+              className="min-h-[22rem] lg:h-[var(--song-panel-height)] lg:self-start"
               style={sheetPanelHeight ? ({ "--song-panel-height": `${sheetPanelHeight}px` } as React.CSSProperties) : undefined}
             >
-              <FluidPanel className="flex h-full min-h-0 flex-col overflow-hidden border border-border/70 bg-card p-3">
-                <div className="mb-2 flex shrink-0 items-center justify-between px-1">
-                  <h2 className="text-sm font-semibold">More info</h2>
+              <FluidPanel className="flex h-full min-h-0 flex-col overflow-hidden border border-border/70 bg-card p-4">
+                <div className="mb-3 flex shrink-0 items-center justify-between px-1">
+                  <h2 className="text-base font-semibold">More info</h2>
                   <span className="text-xs font-medium text-muted-foreground">{activeVariant.tier}</span>
                 </div>
                 {sheet.imageUrl ? (
-                  <div className="mb-2 h-14 shrink-0 overflow-hidden rounded-xl bg-muted ring-1 ring-border/45">
+                  <div className="mb-3 aspect-[16/9] shrink-0 overflow-hidden rounded-xl bg-muted ring-1 ring-border/45">
                     <img src={sheet.imageUrl} alt={sheet.imageAlt ?? ""} loading="lazy" className="h-full w-full object-cover outline outline-1 outline-black/10 dark:outline-white/10" />
                   </div>
                 ) : null}
-                <div className="mb-2 grid shrink-0 grid-cols-2 gap-2">
+                <div className="mb-3 grid shrink-0 grid-cols-2 gap-2">
                   <FluidButton variant="outline" size="sm" onClick={handleFavorite} className="w-full">
                     <StarIcon weight={saved ? "fill" : "regular"} />
                     {saved ? "Saved" : "Save"}
@@ -135,7 +135,7 @@ export function SheetPage() {
                     </a>
                   </FluidButton>
                 </div>
-                <div className="my-2 space-y-0.5 rounded-xl bg-background/45 p-2 ring-1 ring-border/45">
+                <div className="my-2 space-y-1 rounded-xl bg-background/45 p-3 ring-1 ring-border/45">
                   <Info icon={<GaugeIcon />} label="Level" value={activeVariant.tier} />
                   {activeLength ? <Info icon={<MetronomeIcon />} label="Target length" value={activeLength} /> : null}
                   {activeTempo ? <Info icon={<MetronomeIcon />} label="Tempo" value={`${activeTempo} bpm`} /> : null}

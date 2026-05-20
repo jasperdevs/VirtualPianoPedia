@@ -36,6 +36,15 @@ export const artistProfiles: Record<string, ArtistProfile> = {
     sourceUrl: "https://commons.wikimedia.org/wiki/File:Semisonic_at_the_MN_State_Fair.jpg",
     credit: "Wikimedia Commons, CC BY-SA 4.0",
   },
+  kavinsky: {
+    slug: "kavinsky",
+    name: "Kavinsky",
+    role: "Artist",
+    imageUrl: "",
+    imageAlt: "Kavinsky",
+    sourceUrl: "",
+    credit: "",
+  },
 };
 
 export function getArtistProfile(slug: string, fallbackName?: string): ArtistProfile {

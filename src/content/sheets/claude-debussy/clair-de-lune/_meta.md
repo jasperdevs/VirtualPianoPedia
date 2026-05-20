@@ -7,8 +7,6 @@ tempo: 80
 length: "05:00"
 transpose: 0
 source: Local sheet
-imageUrl: /VirtualPianoPedia/assets/songs/clair-de-lune.png
-imageAlt: AI-generated moonlit piano cover for Clair de Lune
 tags:
   - classical
   - piano

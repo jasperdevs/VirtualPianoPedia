@@ -1,8 +1,25 @@
-import { useContext } from "react";
-import { ToastContext } from "@/lib/toast-context";
+import { toast } from "sonner";
+
+export type ToastTone = "success" | "info" | "warning";
+
+export type ToastInput = {
+  title: string;
+  detail?: string;
+  tone?: ToastTone;
+};
 
 export function useToast() {
-  const context = useContext(ToastContext);
-  if (!context) throw new Error("useToast must be used within ToastProvider");
-  return context.showToast;
+  return ({ title, detail, tone = "success" }: ToastInput) => {
+    if (tone === "warning") {
+      toast.warning(title, { description: detail });
+      return;
+    }
+
+    if (tone === "info") {
+      toast.info(title, { description: detail });
+      return;
+    }
+
+    toast.success(title, { description: detail });
+  };
 }
