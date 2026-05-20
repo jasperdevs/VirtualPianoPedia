@@ -12,6 +12,17 @@
   <a href="https://github.com/jasperdevs/VirtualPianoPedia">GitHub</a>
 </p>
 
+<!-- SONG_INDEX_START -->
+
+## Song Index
+
+| Song | Artist | Versions | Folder |
+| --- | --- | --- | --- |
+| Clair de Lune | Claude Debussy | [Normal](./src/content/sheets/clair-de-lune/normal.md) | [folder](./src/content/sheets/clair-de-lune/) |
+| Written on the Sky | Max Richter | [Normal](./src/content/sheets/written-on-the-sky/normal.md), [Hard](./src/content/sheets/written-on-the-sky/hard.md) | [folder](./src/content/sheets/written-on-the-sky/) |
+
+<!-- SONG_INDEX_END -->
+
 ## Add A Sheet
 
 Each song gets one folder:

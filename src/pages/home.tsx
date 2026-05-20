@@ -4,25 +4,13 @@ import { motion } from "framer-motion";
 import type { Icon } from "@phosphor-icons/react";
 import {
   ArrowUpRightIcon,
-  ChartLineUpIcon,
   ClockIcon,
-  FireIcon,
-  FilmSlateIcon,
-  GameControllerIcon,
   GaugeIcon,
-  GiftIcon,
-  HeartIcon,
   MagnifyingGlassIcon,
-  MusicNoteIcon,
   MusicNotesIcon,
   PianoKeysIcon,
-  PopcornIcon,
   SparkleIcon,
   StarIcon,
-  TelevisionIcon,
-  TrendUpIcon,
-  UserSoundIcon,
-  VinylRecordIcon,
 } from "@phosphor-icons/react";
 import { FluidBadge } from "@/components/fluid/FluidBadge";
 import { FluidButton } from "@/components/fluid/FluidButton";
@@ -34,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 type SortMode = "hot" | "az" | "length";
 
-const quickSearches = ["video game", "classical", "popular", "expert", "pop", "calm"];
+const quickSearches = ["max richter", "debussy", "classical", "hard"];
 
 export function HomePage() {
   const [query, setQuery] = useState("");
@@ -117,7 +105,7 @@ export function HomePage() {
                     <h2 className="text-2xl font-semibold tracking-tight">{category}</h2>
                     <FluidBadge color="white">{filteredSheets.length} songs</FluidBadge>
                   </div>
-                  <p className="mt-1.5 text-sm text-muted-foreground">Easy, Normal, Hard, and Expert can live under the same song.</p>
+                  <p className="mt-1.5 text-sm text-muted-foreground">One folder per song, with only the versions that exist.</p>
                 </div>
                 <FluidTabs items={["hot", "az", "length"] as SortMode[]} value={sort} onChange={setSort} />
               </div>
@@ -151,20 +139,9 @@ export function HomePage() {
 const categoryIcons: Partial<Record<(typeof categoryNav)[number], Icon>> = {
   "All Sheets": MusicNotesIcon,
   Favorites: StarIcon,
-  Trending: TrendUpIcon,
-  Easy: HeartIcon,
   Normal: GaugeIcon,
-  Hard: FireIcon,
-  Expert: ChartLineUpIcon,
-  "Video Game": GameControllerIcon,
-  Anime: TelevisionIcon,
+  Hard: GaugeIcon,
   Classical: PianoKeysIcon,
-  Christmas: GiftIcon,
-  Movie: FilmSlateIcon,
-  Pop: PopcornIcon,
-  Vocaloid: MusicNoteIcon,
-  Phonk: VinylRecordIcon,
-  "Player Requests": UserSoundIcon,
 };
 
 function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite: boolean; onFavorite: () => void }) {
@@ -189,7 +166,6 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{sheet.title}</h3>
-            {sheet.tags.includes("fast") || sheet.tags.includes("popular") ? <FireIcon className="size-4 text-muted-foreground" weight="fill" /> : null}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
             <span>{sheet.artist}</span>

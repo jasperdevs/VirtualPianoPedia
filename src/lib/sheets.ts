@@ -97,20 +97,9 @@ export const sheets: Sheet[] = Array.from(grouped.entries())
 export const categoryNav = [
   "All Sheets",
   "Favorites",
-  "Trending",
-  "Easy",
   "Normal",
   "Hard",
-  "Expert",
-  "Video Game",
-  "Anime",
   "Classical",
-  "Christmas",
-  "Movie",
-  "Pop",
-  "Vocaloid",
-  "Phonk",
-  "Player Requests",
 ] as const;
 
 export function getSheet(slug: string) {
@@ -124,9 +113,7 @@ export function getCategoryCount(category: string, favorites: string[] = []) {
 export function filterByCategory(items: Sheet[], category: string, favorites: string[] = []) {
   if (category === "All Sheets") return items;
   if (category === "Favorites") return items.filter((sheet) => favorites.includes(sheet.slug));
-  if (category === "Trending") return items.filter((sheet) => sheet.tags.some((tag) => ["fast", "popular", "piano"].includes(tag)));
   if (difficultyTiers.includes(category as DifficultyTier)) return items.filter((sheet) => sheet.variants.some((variant) => variant.tier === category));
-  if (category === "Player Requests") return items.filter((sheet) => sheet.tags.includes("request"));
   return items.filter((sheet) => sheet.category === category);
 }
 
