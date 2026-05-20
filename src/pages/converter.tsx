@@ -11,6 +11,7 @@ import { FluidTabs } from "@/components/fluid/FluidTabs";
 import { FluidTextarea } from "@/components/fluid/FluidTextarea";
 import { convertInput, createMetaMarkdown, type ArrangementMode, type ConversionMeta, type ConversionResult } from "@/lib/converter";
 import { difficultyTiers, type DifficultyTier } from "@/lib/sheets";
+import { useToast } from "@/lib/use-toast";
 import { cn } from "@/lib/utils";
 
 const defaultMeta: ConversionMeta = {
@@ -40,6 +41,7 @@ export function ConverterPage() {
   const [meta, setMeta] = useState<ConversionMeta>(defaultMeta);
   const [variantMarkdown, setVariantMarkdown] = useState("");
   const [error, setError] = useState("");
+  const showToast = useToast();
 
   const metaMarkdown = useMemo(() => createMetaMarkdown(meta), [meta]);
   const variantFile = `${variantTier.toLowerCase()}.md`;
@@ -64,8 +66,11 @@ export function ConverterPage() {
       setVariantTier("Normal");
       setVariantMarkdown(converted.variantMarkdown);
       setFileName(`${converted.folderSlug}-files.txt`);
+      showToast({ title: "Sheet generated", detail: `${converted.noteCount} notes detected` });
     } catch (conversionError) {
-      setError(conversionError instanceof Error ? conversionError.message : "Could not convert that file.");
+      const message = conversionError instanceof Error ? conversionError.message : "Could not convert that file.";
+      setError(message);
+      showToast({ title: "Conversion failed", detail: message, tone: "warning" });
     }
   }
 
@@ -88,6 +93,7 @@ export function ConverterPage() {
     anchor.download = fileName;
     anchor.click();
     URL.revokeObjectURL(url);
+    showToast({ title: "Download started", detail: fileName });
   }
 
   return (

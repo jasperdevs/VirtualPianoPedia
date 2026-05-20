@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,8 @@ export function FluidChoice({
   onClick: () => void;
   className?: string;
 }) {
+  const layoutId = useId();
+
   return (
     <motion.button
       type="button"
@@ -25,7 +28,7 @@ export function FluidChoice({
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 520, damping: 36 }}
     >
-      {active ? <motion.span layoutId="fluid-choice-active" className="absolute inset-0 rounded-full bg-muted" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
+      {active ? <motion.span initial={false} layoutId={`fluid-choice-active-${layoutId}`} className="absolute inset-0 rounded-full bg-muted" transition={{ type: "spring", stiffness: 420, damping: 32 }} /> : null}
       <span className="relative">{children}</span>
     </motion.button>
   );

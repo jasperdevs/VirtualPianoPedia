@@ -9,16 +9,18 @@ import { FluidCopy } from "@/components/fluid/FluidCopy";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { useFavorites } from "@/lib/favorites";
 import { getSheet } from "@/lib/sheets";
+import { useToast } from "@/lib/use-toast";
 import { cn } from "@/lib/utils";
 
 export function SheetPage() {
   const params = useParams();
   const slug = params["*"];
   const sheet = slug ? getSheet(slug) : undefined;
-  const [variantIndex, setVariantIndex] = useState(0);
+  const [variantSelection, setVariantSelection] = useState<{ slug?: string; index: number }>({ index: -1 });
   const [sheetPanelHeight, setSheetPanelHeight] = useState<number>();
   const sheetPanelRef = useRef<HTMLDivElement | null>(null);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const showToast = useToast();
 
   useEffect(() => {
     const panel = sheetPanelRef.current;
@@ -34,15 +36,28 @@ export function SheetPage() {
     observer.observe(panel);
 
     return () => observer.disconnect();
-  }, [slug, variantIndex]);
+  }, [slug, variantSelection.index]);
 
   if (!sheet) return <Navigate to="/" replace />;
 
-  const activeVariant = sheet.variants[variantIndex] ?? sheet.variants[0];
+  const activeVariantIndex = variantSelection.slug === sheet.slug && variantSelection.index >= 0 ? variantSelection.index : getPreferredVariantIndex(sheet);
+  const activeVariant = sheet.variants[activeVariantIndex] ?? sheet.variants[0];
   const activeLength = activeVariant.length ?? sheet.length;
   const activeTempo = activeVariant.tempo ?? sheet.tempo;
   const activeTranspose = activeVariant.transpose ?? sheet.transpose;
   const rawUrl = `https://github.com/jasperdevs/VirtualPianoPedia/blob/main/src/content/sheets/${sheet.slug}/${activeVariant.fileName}`;
+  const saved = isFavorite(sheet.slug);
+  const title = sheet.title;
+  const sheetSlug = sheet.slug;
+
+  function handleFavorite() {
+    toggleFavorite(sheetSlug);
+    showToast({
+      title: saved ? "Removed from favorites" : "Saved to favorites",
+      detail: title,
+      tone: saved ? "info" : "success",
+    });
+  }
 
   return (
     <section className="h-full overflow-hidden bg-background px-4 py-4 sm:px-6 lg:px-8">
@@ -73,7 +88,7 @@ export function SheetPage() {
 
             <div className="inline-flex w-fit flex-wrap rounded-full bg-muted/70 p-1 lg:ml-auto">
               {sheet.variants.map((variant, index) => (
-                <FluidChoice key={variant.tier} onClick={() => setVariantIndex(index)} active={variantIndex === index}>
+                <FluidChoice key={variant.tier} onClick={() => setVariantSelection({ slug: sheet.slug, index })} active={activeVariantIndex === index}>
                   {variant.tier}
                 </FluidChoice>
               ))}
@@ -82,7 +97,7 @@ export function SheetPage() {
 
           <div className="grid min-h-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
             <div ref={sheetPanelRef} className="min-w-0 self-start">
-              <FluidPanel className="flex max-h-[calc(100dvh-20rem)] min-h-0 flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
+              <FluidPanel className="flex max-h-[calc(100dvh-20rem)] min-h-[18rem] flex-col overflow-hidden bg-card/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-border/50">
                 <div className="flex shrink-0 items-center justify-between gap-3 bg-muted/20 px-5 py-3">
                   <FluidBadge className="bg-background text-foreground ring-1 ring-border/60">{activeVariant.tier}</FluidBadge>
                   <FluidCopy value={activeVariant.body} />
@@ -109,9 +124,9 @@ export function SheetPage() {
                   </div>
                 ) : null}
                 <div className="mb-2 grid shrink-0 grid-cols-2 gap-2">
-                  <FluidButton variant="outline" size="sm" onClick={() => toggleFavorite(sheet.slug)} className="w-full">
-                    <StarIcon weight={isFavorite(sheet.slug) ? "fill" : "regular"} />
-                    {isFavorite(sheet.slug) ? "Saved" : "Save"}
+                  <FluidButton variant="outline" size="sm" onClick={handleFavorite} className="w-full">
+                    <StarIcon weight={saved ? "fill" : "regular"} />
+                    {saved ? "Saved" : "Save"}
                   </FluidButton>
                   <FluidButton asChild size="sm" className="w-full">
                     <a href={rawUrl} target="_blank" rel="noreferrer">
@@ -203,4 +218,10 @@ function Info({ icon, label, value }: { icon: React.ReactNode; label: string; va
       <div className="font-medium">{value}</div>
     </div>
   );
+}
+
+function getPreferredVariantIndex(sheet: NonNullable<ReturnType<typeof getSheet>>) {
+  const preferred = ["Hard", "Expert", "Normal", "Easy"];
+  const index = preferred.map((tier) => sheet.variants.findIndex((variant) => variant.tier === tier)).find((item) => item >= 0);
+  return index ?? 0;
 }

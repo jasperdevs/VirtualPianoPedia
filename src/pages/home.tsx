@@ -20,6 +20,7 @@ import { FluidInput } from "@/components/fluid/FluidInput";
 import { FluidTabs } from "@/components/fluid/FluidTabs";
 import { useFavorites } from "@/lib/favorites";
 import { categoryNav, filterByCategory, getCategoryCount, searchSheets, sheets, sortSheets, tierClass, type Sheet } from "@/lib/sheets";
+import { useToast } from "@/lib/use-toast";
 import { cn } from "@/lib/utils";
 
 type SortMode = "artist" | "song" | "length";
@@ -32,6 +33,7 @@ export function HomePage() {
   const category = searchParams.get("category") ?? "All Sheets";
   const [sort, setSort] = useState<SortMode>("artist");
   const { favorites, isFavorite, toggleFavorite } = useFavorites();
+  const showToast = useToast();
   const filteredSheets = sortSheets(searchSheets(filterByCategory(sheets, category, favorites), query), sort);
 
   function setQuery(value: string) {
@@ -138,7 +140,20 @@ export function HomePage() {
                 <div>
                   <div>
                     {filteredSheets.map((sheet) => (
-                      <SheetRow key={sheet.slug} sheet={sheet} isFavorite={isFavorite(sheet.slug)} onFavorite={() => toggleFavorite(sheet.slug)} />
+                      <SheetRow
+                        key={sheet.slug}
+                        sheet={sheet}
+                        isFavorite={isFavorite(sheet.slug)}
+                        onFavorite={() => {
+                          const saved = isFavorite(sheet.slug);
+                          toggleFavorite(sheet.slug);
+                          showToast({
+                            title: saved ? "Removed from favorites" : "Saved to favorites",
+                            detail: sheet.title,
+                            tone: saved ? "info" : "success",
+                          });
+                        }}
+                      />
                     ))}
                   </div>
                 </div>
