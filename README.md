@@ -4,7 +4,7 @@
 
 <h1 align="center">VirtualPianoPedia</h1>
 
-<p align="center">Roblox virtual piano sheets with folders for each song, difficulty variants, local favorites, MIDI conversion, and sampled piano preview</p>
+<p align="center">Roblox virtual piano sheets with folders for each song, difficulty variants, local favorites, and MIDI conversion</p>
 
 <p align="center">
   <a href="https://jasperdevs.github.io/VirtualPianoPedia/">Live site</a>
@@ -77,12 +77,6 @@ npm install
 npm run dev
 npm run build
 ```
-
-## Audio Credits
-
-Playback uses Salamander Grand Piano V3 samples by Alexander Holm through `@audio-samples/piano-mp3-velocity16`
-
-The samples are licensed under CC BY 3.0
 
 ## License
 

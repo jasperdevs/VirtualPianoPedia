@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRightIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon, PlayIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon, DownloadSimpleIcon, FileArrowUpIcon, GithubLogoIcon, MagicWandIcon } from "@phosphor-icons/react";
 import { FluidButton } from "@/components/fluid/FluidButton";
 import { FluidCopy } from "@/components/fluid/FluidCopy";
 import { FluidInput } from "@/components/fluid/FluidInput";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { FluidSwitch } from "@/components/fluid/FluidSwitch";
 import { FluidTextarea } from "@/components/fluid/FluidTextarea";
-import { SheetPlayer } from "@/components/SheetPlayer";
 import { convertInput, type ConversionResult } from "@/lib/converter";
 
 export function ConverterPage() {
@@ -66,7 +65,7 @@ export function ConverterPage() {
         <div className="border-b border-border/70 pb-5">
           <div className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Tool</div>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Converter</h1>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI, paste notes, preview the sheet, then edit the GitHub files</p>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Upload MIDI or paste notes, then edit and copy the GitHub files</p>
         </div>
 
         <div className="mt-5 grid min-w-0 gap-5 lg:grid-cols-[400px_minmax(0,1fr)]">
@@ -134,7 +133,6 @@ export function ConverterPage() {
                     </FluidButton>
                   </div>
                 </div>
-                <SheetPlayer sheet={variantMarkdown} />
                 <div className="grid gap-3">
                   <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
                     <Field label="Folder">
@@ -161,9 +159,9 @@ export function ConverterPage() {
               </div>
             ) : (
               <div className="flex min-h-[430px] flex-col items-center justify-center rounded-2xl bg-muted/25 px-6 text-center">
-                <PlayIcon className="mb-5 size-12 text-muted-foreground" />
+                <MagicWandIcon className="mb-5 size-12 text-muted-foreground" />
                 <h2 className="text-2xl font-semibold tracking-tight">No sheet yet</h2>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to preview and edit the output</p>
+                <p className="mt-2 max-w-sm text-sm text-muted-foreground">Upload MIDI or generate from pasted notes to edit the output</p>
               </div>
             )}
           </FluidPanel>

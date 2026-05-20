@@ -8,7 +8,6 @@ import { FluidChoice } from "@/components/fluid/FluidChoice";
 import { FluidCopy } from "@/components/fluid/FluidCopy";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
 import { useFavorites } from "@/lib/favorites";
-import { SheetPlayer } from "@/components/SheetPlayer";
 import { getSheet } from "@/lib/sheets";
 
 export function SheetPage() {
@@ -62,8 +61,6 @@ export function SheetPage() {
                 </FluidChoice>
               ))}
             </div>
-
-            <SheetPlayer sheet={activeVariant.body} className="mt-6" />
 
             <FluidPanel className="mt-6 overflow-hidden border border-border/70 bg-card">
               <div className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
