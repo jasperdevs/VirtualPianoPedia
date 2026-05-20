@@ -79,6 +79,7 @@ export function SheetPage() {
                 </FluidButton>
                 <div className="my-3 space-y-1 rounded-xl bg-background/45 p-2 ring-1 ring-border/45">
                   <Info icon={<GaugeIcon />} label="Level" value={sheet.difficulty} />
+                  <Info icon={<MetronomeIcon />} label="Target length" value={sheet.length} />
                   <Info icon={<MetronomeIcon />} label="Tempo" value={`${sheet.tempo} bpm`} />
                   <Info icon={<MusicNoteIcon />} label="Transpose" value={String(sheet.transpose)} />
                 </div>

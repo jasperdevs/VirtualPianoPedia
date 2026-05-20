@@ -16,10 +16,10 @@
 
 ## Song Index
 
-| Artist | Song | Versions | Folder |
-| --- | --- | --- | --- |
-| Claude Debussy | Clair de Lune | [Normal](./src/content/sheets/claude-debussy/clair-de-lune/normal.md) | [folder](./src/content/sheets/claude-debussy/clair-de-lune/) |
-| Max Richter | Written on the Sky | [Normal](./src/content/sheets/max-richter/written-on-the-sky/normal.md), [Hard](./src/content/sheets/max-richter/written-on-the-sky/hard.md) | [folder](./src/content/sheets/max-richter/written-on-the-sky/) |
+| Artist | Song | Target length | Tempo | Versions | Folder |
+| --- | --- | --- | --- | --- | --- |
+| Claude Debussy | Clair de Lune | 05:00 | 80 bpm | [Normal](./src/content/sheets/claude-debussy/clair-de-lune/normal.md) | [folder](./src/content/sheets/claude-debussy/clair-de-lune/) |
+| Max Richter | Written on the Sky | 01:51 | 95 bpm | [Normal](./src/content/sheets/max-richter/written-on-the-sky/normal.md), [Hard](./src/content/sheets/max-richter/written-on-the-sky/hard.md) | [folder](./src/content/sheets/max-richter/written-on-the-sky/) |
 
 <!-- SONG_INDEX_END -->
 

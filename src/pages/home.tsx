@@ -7,6 +7,7 @@ import {
   ClockIcon,
   GaugeIcon,
   MagnifyingGlassIcon,
+  MetronomeIcon,
   MusicNotesIcon,
   PianoKeysIcon,
   SparkleIcon,
@@ -200,6 +201,10 @@ function SheetRow({ sheet, isFavorite, onFavorite }: { sheet: Sheet; isFavorite:
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />
             {sheet.length}
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <MetronomeIcon className="size-3.5" />
+            {sheet.tempo} bpm
           </span>
         </div>
       </div>

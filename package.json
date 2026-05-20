@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "vite",
     "songs:index": "node scripts/update-readme-songs.mjs",
-    "build": "npm run songs:index && tsc -b && vite build && node -e \"fs.copyFileSync('dist/index.html','dist/404.html')\"",
+    "sheets:validate": "node scripts/validate-sheets.mjs",
+    "build": "npm run songs:index && npm run sheets:validate && tsc -b && vite build && node -e \"fs.copyFileSync('dist/index.html','dist/404.html')\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -1,5 +1,5 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeftIcon, ArrowUpRightIcon, ClockIcon, ImageIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, ArrowUpRightIcon, ClockIcon, ImageIcon, MetronomeIcon } from "@phosphor-icons/react";
 import { FluidBadge } from "@/components/fluid/FluidBadge";
 import { FluidButton } from "@/components/fluid/FluidButton";
 import { FluidPanel } from "@/components/fluid/FluidPanel";
@@ -60,6 +60,10 @@ export function ArtistPage() {
                       <span className="inline-flex items-center gap-1">
                         <ClockIcon className="size-3.5" />
                         {sheet.length}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MetronomeIcon className="size-3.5" />
+                        {sheet.tempo} bpm
                       </span>
                     </div>
                   </div>

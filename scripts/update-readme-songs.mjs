@@ -10,11 +10,11 @@ const end = "<!-- SONG_INDEX_END -->";
 
 function readMeta(artistSlug, songSlug) {
   const metaPath = path.join(sheetsDir, artistSlug, songSlug, "_meta.md");
-  if (!fs.existsSync(metaPath)) return { title: songSlug, artist: artistSlug };
+  if (!fs.existsSync(metaPath)) return { title: songSlug, artist: artistSlug, tempo: "", length: "" };
 
   const raw = fs.readFileSync(metaPath, "utf8");
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!match) return { title: songSlug, artist: artistSlug };
+  if (!match) return { title: songSlug, artist: artistSlug, tempo: "", length: "" };
 
   const meta = {};
   for (const line of match[1].split(/\r?\n/)) {
@@ -24,6 +24,8 @@ function readMeta(artistSlug, songSlug) {
   return {
     title: meta.title || songSlug,
     artist: meta.artist || "Unknown",
+    tempo: meta.tempo || "",
+    length: meta.length || "",
   };
 }
 
@@ -54,7 +56,7 @@ const rows = songs.map((song) => {
   const versionLinks = song.variants
     .map((variant) => `[${titleCase(variant)}](./src/content/sheets/${song.artistSlug}/${song.songSlug}/${variant}.md)`)
     .join(", ");
-  return `| ${song.artist} | ${song.title} | ${versionLinks} | [folder](./src/content/sheets/${song.artistSlug}/${song.songSlug}/) |`;
+  return `| ${song.artist} | ${song.title} | ${song.length} | ${song.tempo} bpm | ${versionLinks} | [folder](./src/content/sheets/${song.artistSlug}/${song.songSlug}/) |`;
 });
 
 const index = [
@@ -62,8 +64,8 @@ const index = [
   "",
   "## Song Index",
   "",
-  "| Artist | Song | Versions | Folder |",
-  "| --- | --- | --- | --- |",
+  "| Artist | Song | Target length | Tempo | Versions | Folder |",
+  "| --- | --- | --- | --- | --- | --- |",
   ...rows,
   "",
   end,
