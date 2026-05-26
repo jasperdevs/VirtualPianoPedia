@@ -32,7 +32,7 @@ export function ConverterPage() {
   const [sustain, setSustain] = useState(true);
   const [groupChords, setGroupChords] = useState(true);
   const [includeTiming, setIncludeTiming] = useState(false);
-  const [arrangement, setArrangement] = useState<ArrangementMode>("balanced");
+  const [arrangement, setArrangement] = useState<ArrangementMode>("full");
   const [fileName, setFileName] = useState("converted-sheet-files.txt");
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [artistFolder, setArtistFolder] = useState("unknown");
@@ -53,7 +53,7 @@ export function ConverterPage() {
     return `# src/content/sheets/${safeArtist}/${safeFolder}/_meta.md\n\n${metaMarkdown.trimEnd()}\n\n# src/content/sheets/${safeArtist}/${safeFolder}/${variantFile}\n\n${variantMarkdown.trimEnd()}\n`;
   }, [artistFolder, folderSlug, metaMarkdown, result, variantFile, variantMarkdown]);
 
-  const editedNoteCount = useMemo(() => variantMarkdown.split(/\s+/).filter(Boolean).length, [variantMarkdown]);
+  const editedNoteCount = useMemo(() => countSheetNotes(variantMarkdown), [variantMarkdown]);
 
   async function handleConvert(input: string | ArrayBuffer, name = "converted-sheet.md") {
     setError("");
@@ -301,4 +301,15 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function slugify(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function countSheetNotes(sheet: string) {
+  const playableSheet = sheet.replace(/\([^)]*\)/g, " ");
+
+  return (
+    playableSheet.match(/\[[^\]]+\]-*|[^\s()[\]-](?:-+)?/g)?.reduce((total, token) => {
+      const chord = /^\[([^\]]+)\]/.exec(token);
+      return total + (chord ? chord[1].length : 1);
+    }, 0) ?? 0
+  );
 }

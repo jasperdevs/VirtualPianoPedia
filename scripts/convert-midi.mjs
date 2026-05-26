@@ -73,7 +73,6 @@ const virtualPianoKeys = [
 
 const firstVirtualPianoMidi = 36;
 const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
-const defaultMaxChordKeys = 6;
 const defaultGridDivision = 24;
 const tiers = new Set(["easy", "normal", "hard", "expert"]);
 const arrangements = new Set(["balanced", "melody", "full"]);
@@ -106,9 +105,9 @@ function main() {
     sustain: !args.noSustain,
     groupChords: !args.noChords,
     includeTiming: Boolean(args.timing),
-    arrangement: choiceArg(args.arrangement, "balanced", arrangements, "--arrangement"),
+    arrangement: choiceArg(args.arrangement, "full", arrangements, "--arrangement"),
     gridDivision: numberArg(args.grid, defaultGridDivision),
-    maxChordKeys: numberArg(args.maxChord, defaultMaxChordKeys),
+    maxChordKeys: args.maxChord === undefined ? undefined : numberArg(args.maxChord, virtualPianoKeys.length),
   });
 
   const meta = {
@@ -244,7 +243,7 @@ function convertMidi(inputBuffer, options) {
 }
 
 function renderMidiGroup(notes, options) {
-  const maxChordKeys = Math.max(1, Math.min(10, Math.round(options.maxChordKeys ?? defaultMaxChordKeys)));
+  const maxChordKeys = options.maxChordKeys === undefined ? virtualPianoKeys.length : Math.max(1, Math.min(virtualPianoKeys.length, Math.round(options.maxChordKeys)));
   const byKey = new Map();
 
   for (const note of notes) {
@@ -445,7 +444,7 @@ Options:
   --tags classical,piano
   --arrangement balanced|melody|full
   --grid 24
-  --max-chord 6
+  --max-chord 6 (optional cap for simplified sheets)
   --timing
   --no-sustain
   --no-chords

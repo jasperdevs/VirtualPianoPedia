@@ -86,9 +86,9 @@ Useful options:
 --image-source "https://example.com/source"
 --image-credit "Artist name, license"
 --tags classical,piano
---arrangement balanced
+--arrangement full
 --grid 24
---max-chord 6
+--max-chord 6 # optional cap for simplified sheets
 --timing
 --no-sustain
 --no-chords

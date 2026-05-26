@@ -26,6 +26,7 @@ try {
   ]);
   const balanced = runConverter("balanced", ["--arrangement", "balanced"]);
   const melody = runConverter("melody", ["--arrangement", "melody"]);
+  const defaultConversion = runConverter("default", []);
   const capped = runConverter("capped", ["--arrangement", "full", "--max-chord", "3", "--grid", "12"]);
 
   assert(full.meta.includes("tempo: 120"), "tempo was not read from MIDI");
@@ -41,10 +42,11 @@ try {
   assert(!/\[\[|\]\]/.test(full.sheet), "nested bracket output was generated");
   assert(/\][-\s]/.test(full.sheet), "long-note sustain was not rendered after the token");
   assert(!/\[[^\]]*-/.test(full.sheet), "sustain dashes were rendered inside a chord");
-  assert(allChordsAtMost(full.sheet, 6), "dense chords were not trimmed to the default cap");
+  assert(hasChordLongerThan(full.sheet, 6), "dense chords were trimmed even though no cap was requested");
   assert(allChordsAtMost(capped.sheet, 3), "custom max chord cap was not enforced");
+  assert(defaultConversion.sheet === full.sheet, "default arrangement did not preserve the full MIDI");
   assert(full.stderr.includes("Skipped 1 drum/percussion MIDI track"), "percussion warning was not printed");
-  assert(full.stderr.includes("Trimmed"), "dense chord warning was not printed");
+  assert(!full.stderr.includes("Trimmed"), "dense chord warning was printed even though no cap was requested");
 
   assert(tokenCount(melody.sheet) < tokenCount(full.sheet), "melody mode did not reduce a multi-track MIDI");
   assert(tokenCount(balanced.sheet) < tokenCount(full.sheet), "balanced mode did not reduce a multi-track MIDI");
@@ -156,6 +158,10 @@ function runConverter(label, extraArgs) {
 
 function allChordsAtMost(sheet, maxKeys) {
   return [...sheet.matchAll(/\[([^\]]+)\]/g)].every((match) => match[1].length <= maxKeys);
+}
+
+function hasChordLongerThan(sheet, maxKeys) {
+  return [...sheet.matchAll(/\[([^\]]+)\]/g)].some((match) => match[1].length > maxKeys);
 }
 
 function tokenCount(sheet) {

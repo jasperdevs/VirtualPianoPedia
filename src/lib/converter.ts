@@ -67,7 +67,6 @@ const virtualPianoKeys = [
 
 const firstVirtualPianoMidi = 36;
 const lastVirtualPianoMidi = firstVirtualPianoMidi + virtualPianoKeys.length - 1;
-const defaultMaxChordKeys = 6;
 const defaultGridDivision = 24;
 
 const noteNameToSemitone = new Map<string, number>([
@@ -172,7 +171,7 @@ function isPercussionTrack(track: { channel?: number; instrument?: { percussion?
 }
 
 function renderMidiGroup(notes: ShiftedMidiNote[], options: ConvertOptions) {
-  const maxChordKeys = Math.max(1, Math.min(10, Math.round(options.maxChordKeys ?? defaultMaxChordKeys)));
+  const maxChordKeys = options.maxChordKeys === undefined ? virtualPianoKeys.length : Math.max(1, Math.min(virtualPianoKeys.length, Math.round(options.maxChordKeys)));
   const byKey = new Map<string, { key: string; midi: number; duration: number; velocity: number }>();
 
   for (const note of notes) {
@@ -361,7 +360,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
         instrumentName: note.track.instrument.name,
       }))
       .sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
-    const notes = selectArrangementNotes(rawNotes, options.arrangement ?? "balanced").sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
+    const notes = selectArrangementNotes(rawNotes, options.arrangement ?? "full").sort((a, b) => a.ticks - b.ticks || a.midi - b.midi);
 
     noteCount = notes.length;
     const endTime = notes.reduce((max, note) => Math.max(max, note.time + note.duration), 0);
@@ -377,7 +376,7 @@ export async function convertInput(input: string | ArrayBuffer, fileName: string
     }
 
     if (rawNotes.length !== notes.length) {
-      warnings.push(`Kept ${notes.length} of ${rawNotes.length} non-drum MIDI notes using ${options.arrangement ?? "balanced"} arrangement mode.`);
+      warnings.push(`Kept ${notes.length} of ${rawNotes.length} non-drum MIDI notes using ${options.arrangement ?? "full"} arrangement mode.`);
     }
 
     const octaveShift = chooseOctaveShift(notes, options.transpose);
