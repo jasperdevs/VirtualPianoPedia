@@ -37,6 +37,7 @@ try {
   assert(full.meta.includes("imageCredit: Example Artist, CC0"), "imageCredit was not written");
   assert(full.sheet.includes("1"), "C2 did not map to 1");
   assert(full.sheet.includes("!"), "C#2 did not map to !");
+  assert(full.sheet.includes("m"), "high out-of-range MIDI note did not map back into the virtual piano range");
   assert(full.sheet.includes("t"), "C4 did not map to t");
   assert(/\[[^\]]*(o|s)[^\]]*(s|o)[^\]]*\]/.test(full.sheet), "same-time notes were not grouped into a chord");
   assert(!/\[\[|\]\]/.test(full.sheet), "nested bracket output was generated");
@@ -47,6 +48,7 @@ try {
   assert(defaultConversion.sheet === full.sheet, "default arrangement did not preserve the full MIDI");
   assert(full.stderr.includes("Skipped 1 drum/percussion MIDI track"), "percussion warning was not printed");
   assert(!full.stderr.includes("Trimmed"), "dense chord warning was printed even though no cap was requested");
+  assert(!/folded|Auto-shifted/i.test(full.stderr), "normal range mapping was reported as a warning");
 
   assert(tokenCount(melody.sheet) < tokenCount(full.sheet), "melody mode did not reduce a multi-track MIDI");
   assert(tokenCount(balanced.sheet) < tokenCount(full.sheet), "balanced mode did not reduce a multi-track MIDI");
@@ -85,6 +87,7 @@ function createFixtureMidi(outputPath) {
   const melodyTrack = midi.addTrack();
   melodyTrack.instrument.number = 0;
   melodyTrack.addNote({ midi: 36, time: 0, duration: 0.4, velocity: 0.7 });
+  melodyTrack.addNote({ midi: 108, time: 0.25, duration: 0.2, velocity: 0.6 });
   melodyTrack.addNote({ midi: 37, time: 0.5, duration: 0.4, velocity: 0.7 });
   melodyTrack.addNote({ midi: 60, time: 1, duration: 0.4, velocity: 0.9 });
   melodyTrack.addNote({ midi: 64, time: 1.5, duration: 0.4, velocity: 0.9 });

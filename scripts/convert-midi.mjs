@@ -176,16 +176,7 @@ function convertMidi(inputBuffer, options) {
   if (rawNotes.length !== notes.length) warnings.push(`Kept ${notes.length} of ${rawNotes.length} non-drum MIDI notes using ${options.arrangement} arrangement mode.`);
 
   const octaveShift = chooseOctaveShift(notes, options.transpose);
-  const shiftedNotes = notes.map((note) => ({ ...note, mappedMidi: note.midi + options.transpose + octaveShift }));
-  const foldedCount = shiftedNotes.filter((note) => note.mappedMidi < firstVirtualPianoMidi || note.mappedMidi > lastVirtualPianoMidi).length;
-
-  if (octaveShift !== 0) {
-    warnings.push(`Auto-shifted MIDI by ${octaveShift / 12} octave${Math.abs(octaveShift) === 12 ? "" : "s"} to fit the Roblox virtual piano range.`);
-  }
-
-  if (foldedCount) {
-    warnings.push(`${foldedCount} notes were outside the playable range and were folded by octave.`);
-  }
+  const shiftedNotes = notes.map((note) => ({ ...note, mappedMidi: fitMidiToVirtualRange(note.midi + options.transpose + octaveShift) }));
 
   const ppq = Math.max(1, midi.header.ppq || 480);
   const quantizeTicks = chooseQuantizeTicks(notes, ppq, options.gridDivision);
